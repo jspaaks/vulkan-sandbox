@@ -1,32 +1,53 @@
+#define GLFW_INCLUDE_VULKAN
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
+#include <GLFW/glfw3.h>
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
-#include <math.h>
-#include "addition.h"
-#include "division.h"
-#include "multiplication.h"
-#include "subtraction.h"
+#include <stdlib.h>
+#include <vulkan/vulkan.h>
 
 int main (void) {
-    fprintf(stdout, "-- test compile definitions\n");
-#ifndef DEBUG
-    fprintf(stdout, "   DEBUG compile definition has not been defined.\n");
-#else
-    fprintf(stdout, "   DEBUG compile definition has been defined.\n");
-#endif
-    fprintf(stdout, "\n");
+    glfwInit();
 
-    fprintf(stdout, "-- test whether math library was linked\n");
-    fprintf(stdout, "   sqrt(144) = %f\n", sqrt(144));
-    fprintf(stdout, "\n");
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    fprintf(stdout, "-- test own library\n");
-    fprintf(stdout, "   divide(2, 3) = %d\n", divide(2, 3));
-    fprintf(stdout, "   multiply(2, 3) = %d\n", multiply(2, 3));
-    fprintf(stdout, "\n");
+    GLFWwindow * window = glfwCreateWindow(800, 600, "Vulkan window", nullptr, nullptr);
 
-    fprintf(stdout, "-- test external library\n");
-    fprintf(stdout, "   add(2, 3) = %d\n", add(2, 3));
-    fprintf(stdout, "   subtract(2, 3) = %d\n", subtract(2, 3));
-    fprintf(stdout, "\n");
+    uint32_t extensionCount;
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
-    return 0;
+    fprintf(stdout, "%" PRIu32 " extensions supported.\n", extensionCount);
+
+    {
+        // linear algebra test
+        double vec4_data[] = {0, 10, 20, 30};
+        double mat4_data[] = {0, 1, 2, 3,
+                              4, 5, 6, 7,
+                              8, 9, 0, 1,
+                              2, 3, 4, 5};
+        double result4_data[] = {0, 0, 0, 0};
+        gsl_vector_view vec4 = gsl_vector_view_array(vec4_data, 4);
+        gsl_matrix_view mat4 = gsl_matrix_view_array(mat4_data, 4, 4);
+        gsl_vector_view result4 = gsl_vector_view_array(result4_data, 4);
+        gsl_blas_dgemv(CblasNoTrans, 1.0, &mat4.matrix, &vec4.vector, 0.0, &result4.vector);
+
+        fprintf(stdout, "[\n");
+        fprintf(stdout, "  %g\n", result4_data[0]);
+        fprintf(stdout, "  %g\n", result4_data[1]);
+        fprintf(stdout, "  %g\n", result4_data[2]);
+        fprintf(stdout, "  %g\n", result4_data[3]);
+        fprintf(stdout, "]\n");
+    }
+
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+    }
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    return EXIT_SUCCESS;
 }

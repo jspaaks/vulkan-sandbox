@@ -54,17 +54,17 @@ target_link_libraries(
     tgt_exe_vulkan-sandbox
     PRIVATE
         m
+        glfw
+        gsl
+        gslcblas
+        vulkan
         tgt_lib_their
 )
 
 target_sources(
     tgt_exe_vulkan-sandbox
     PRIVATE
-        ${PROJECT_ROOT}/src/vulkan-sandbox/addition.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/division.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/main.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/multiplication.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/subtraction.c
 )
 
 install(TARGETS tgt_exe_vulkan-sandbox)
