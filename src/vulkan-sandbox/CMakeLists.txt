@@ -39,6 +39,7 @@ target_compile_options(
         -Wall
         -Wextra
         -pedantic
+        -pthread
         $<$<CONFIG:Debug>:-g>
         $<$<CONFIG:Debug>:-O0>
         $<$<CONFIG:Release>:-Werror>
@@ -54,7 +55,11 @@ target_link_libraries(
     tgt_exe_vulkan-sandbox
     PRIVATE
         glfw
+        rt       # linker dependency of glfw
+        m        # linker dependency of glfw
+        dl       # linker dependency of glfw
         vulkan
+        pthread
 )
 
 target_sources(
