@@ -47,18 +47,14 @@ target_compile_options(
 target_include_directories(
     tgt_exe_vulkan-sandbox
     PRIVATE
-        ${PROJECT_ROOT}/third_party/their/include
+        ${PROJECT_ROOT}/third_party/hmm
 )
 
 target_link_libraries(
     tgt_exe_vulkan-sandbox
     PRIVATE
-        m
         glfw
-        gsl
-        gslcblas
         vulkan
-        tgt_lib_their
 )
 
 target_sources(

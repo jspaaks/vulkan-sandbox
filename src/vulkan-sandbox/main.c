@@ -1,13 +1,11 @@
 #define GLFW_INCLUDE_VULKAN
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
 #include <GLFW/glfw3.h>
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vulkan/vulkan.h>
+#include "HandmadeMath.h"
 
 int main (void) {
     glfwInit();
@@ -23,23 +21,9 @@ int main (void) {
 
     {
         // linear algebra test
-        double vec4_data[] = {0, 10, 20, 30};
-        double mat4_data[] = {0, 1, 2, 3,
-                              4, 5, 6, 7,
-                              8, 9, 0, 1,
-                              2, 3, 4, 5};
-        double result4_data[] = {0, 0, 0, 0};
-        gsl_vector_view vec4 = gsl_vector_view_array(vec4_data, 4);
-        gsl_matrix_view mat4 = gsl_matrix_view_array(mat4_data, 4, 4);
-        gsl_vector_view result4 = gsl_vector_view_array(result4_data, 4);
-        gsl_blas_dgemv(CblasNoTrans, 1.0, &mat4.matrix, &vec4.vector, 0.0, &result4.vector);
-
-        fprintf(stdout, "[\n");
-        fprintf(stdout, "  %g\n", result4_data[0]);
-        fprintf(stdout, "  %g\n", result4_data[1]);
-        fprintf(stdout, "  %g\n", result4_data[2]);
-        fprintf(stdout, "  %g\n", result4_data[3]);
-        fprintf(stdout, "]\n");
+        HMM_Vec4 vec4 = HMM_V4(0, 10, 20, 30);
+        HMM_Mat4 mat4 = HMM_M4();
+        mat4.Elements[3][0] = -1.f;
     }
 
     while (!glfwWindowShouldClose(window)) {
