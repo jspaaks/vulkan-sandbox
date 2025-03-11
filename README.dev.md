@@ -33,3 +33,9 @@ $ clang-format -Werror --dry-run main.c
 # format in place all *.c and *.h files under ./src
 $ clang-format -i `find ./src -type f -name '*.[c|h]'`
 ```
+
+## Dependencies
+
+- GLFW, for making windows (assumed installed)
+- Vulkan, for interacting with GPU (assumed installed)
+- Handmade Math, for linear algebra (vendored, see [`/third_party/hmm`](`/third_party/hmm`))
