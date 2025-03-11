@@ -36,6 +36,6 @@ $ clang-format -i `find ./src -type f -name '*.[c|h]'`
 
 ## Dependencies
 
-- GLFW, for making windows (assumed installed)
-- Vulkan, for interacting with GPU (assumed installed)
-- Handmade Math, for linear algebra (vendored, see [`/third_party/hmm`](`/third_party/hmm`))
+- GLFW, for making windows (assumed installed; see [https://www.glfw.org/](https://www.glfw.org/))
+- Vulkan, for interacting with GPU (assumed installed; see [https://www.vulkan.org/](https://www.vulkan.org/))
+- Handmade Math, for linear algebra (vendored, see [`/third_party/hmm`](`/third_party/hmm`) and https://github.com/HandmadeMath/HandmadeMath)
