@@ -17,7 +17,7 @@ void print_instance_layer_properties (const VkInstanceCreateInfo * createInfo);
 
 void instance_destroy (VkInstance * instance) {
     vkDestroyInstance(*instance, nullptr);
-    *instance = nullptr;
+    *instance = VK_NULL_HANDLE;
 }
 
 
@@ -58,7 +58,7 @@ VkInstance instance_init (void) {
     print_instance_extension_properties(&createInfo);
     print_instance_layer_properties(&createInfo);
 
-    VkInstance instance = nullptr;
+    VkInstance instance = VK_NULL_HANDLE;
     VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Problem creating VkInstance (%s), aborting.\n", stringify_vkresult(result));
