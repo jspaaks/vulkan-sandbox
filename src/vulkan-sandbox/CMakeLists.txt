@@ -65,9 +65,11 @@ target_link_libraries(
 target_sources(
     tgt_exe_vulkan-sandbox
     PRIVATE
+        ${PROJECT_ROOT}/src/vulkan-sandbox/device/physical.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/errors.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/instance.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/main.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/vulkan/init.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/window/init.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/window.c
 )
 
 install(TARGETS tgt_exe_vulkan-sandbox)

@@ -1,5 +1,5 @@
-#include "vulkan/init.h"
-#include "window/init.h"
+#include "instance.h"
+#include "window.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -20,8 +20,8 @@ int main (void) {
 
     // initialize resources
 
-    GLFWwindow * window = init_window();
-    VkInstance instance = init_vulkan();
+    GLFWwindow * window = window_init();
+    VkInstance instance = instance_init();
 
     // main loop
 
@@ -29,9 +29,8 @@ int main (void) {
 
     // clean up resources
 
-    vkDestroyInstance(instance, nullptr);
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    instance_destroy(&instance);
+    window_destroy(&window);
 
     return EXIT_SUCCESS;
 }

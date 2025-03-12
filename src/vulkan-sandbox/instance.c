@@ -1,4 +1,6 @@
-#include "init.h"
+#include "instance.h"
+#include "errors.h"
+
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
 #include <inttypes.h>
@@ -8,10 +10,18 @@
 #include <string.h>
 
 
+
 void print_instance_extension_properties (const VkInstanceCreateInfo * createInfo);
 void print_instance_layer_properties (const VkInstanceCreateInfo * createInfo);
 
-VkInstance init_vulkan (void) {
+
+void instance_destroy (VkInstance * instance) {
+    vkDestroyInstance(*instance, nullptr);
+    *instance = nullptr;
+}
+
+
+VkInstance instance_init (void) {
     uint32_t enabledExtensionCount;
     const char ** ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&enabledExtensionCount);
 
@@ -39,6 +49,7 @@ VkInstance init_vulkan (void) {
         .enabledExtensionCount = enabledExtensionCount,
         .enabledLayerCount = enabledLayerCount,
         .pApplicationInfo = &applicationInfo,
+        .pNext = nullptr,
         .ppEnabledExtensionNames = ppEnabledExtensionNames,
         .ppEnabledLayerNames = ppEnabledLayerNames,
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
@@ -48,10 +59,12 @@ VkInstance init_vulkan (void) {
     print_instance_layer_properties(&createInfo);
 
     VkInstance instance = nullptr;
-    if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-        fprintf(stderr, "Problem creating VkInstance, aborting.\n");
+    VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
+    if (result != VK_SUCCESS) {
+        fprintf(stderr, "Problem creating VkInstance (%s), aborting.\n", stringify_vkresult(result));
         exit(EXIT_FAILURE);
     }
+
     return instance;
 }
 
