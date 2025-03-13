@@ -71,6 +71,7 @@ target_sources(
         ${PROJECT_ROOT}/src/vulkan-sandbox/errors.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/instance.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/main.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/messenger.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/pipeline.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/queueing.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/shader-modules.c
