@@ -40,4 +40,4 @@ $ clang-format -i `find ./src -type f -name '*.[c|h]'`
     - Version should be at least 3.2, because of use of `glfwVulkanSupported` and `glfwGetRequiredInstanceExtensions`
     - TODO not sure what the linker dependencies of GLFW are, might be `-ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi`
 - Vulkan, for interacting with GPU (assumed installed; see [https://www.vulkan.org/](https://www.vulkan.org/))
-- Handmade Math, for linear algebra (vendored, see [`/third_party/hmm`](`/third_party/hmm`) and https://github.com/HandmadeMath/HandmadeMath)
+- Handmade Math, for linear algebra (vendored, see [`/third_party`](/third_party) and [https://github.com/HandmadeMath/HandmadeMath](https://github.com/HandmadeMath/HandmadeMath))
