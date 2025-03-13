@@ -1,5 +1,6 @@
 #include "physical.h"
 
-void init_physical_device (void) {
-    // pass
+VkPhysicalDevice * physical_device_init (VkInstance * instance) {
+    // TODO
+    return nullptr;
 }

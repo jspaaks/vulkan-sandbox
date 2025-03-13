@@ -1,6 +1,9 @@
 #ifndef DEVICE_PHYSICAL_H
 #define DEVICE_PHYSICAL_H
 
-void init_physical_device (void);
+#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
+#include <GLFW/glfw3.h>
+
+VkPhysicalDevice * physical_device_init (VkInstance * instance);
 
 #endif
