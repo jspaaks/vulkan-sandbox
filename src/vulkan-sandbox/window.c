@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void callback (GLFWwindow * window, int key, int, int action, int);
+static void callback (GLFWwindow * window, int key, int, int action, int);
 
-void callback (GLFWwindow * window, int key, int, int action, int) {
+static void callback (GLFWwindow * window, int key, int, int action, int) {
     if ((key == GLFW_KEY_ESCAPE) && (action == GLFW_PRESS)) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
@@ -17,11 +17,6 @@ GLFWwindow * window_init (void) {
 
     if (glfwInit() != GLFW_TRUE) {
         fprintf(stderr, "Encountered problem initializing window, aborting.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (glfwVulkanSupported() != GLFW_TRUE) {
-        fprintf(stderr, "According to GLWF, Vulkan is not supported here, aborting.\n");
         exit(EXIT_FAILURE);
     }
 
