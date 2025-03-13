@@ -66,12 +66,12 @@ target_link_libraries(
 target_sources(
     tgt_exe_vulkan-sandbox
     PRIVATE
-        ${PROJECT_ROOT}/src/vulkan-sandbox/device/logical.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/device/physical.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/errors.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/instance.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/logical-device.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/main.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/messenger.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/physical-device.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/pipeline.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/queueing.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/shader-modules.c

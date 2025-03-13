@@ -1,5 +1,6 @@
 #include "instance.h"
 #include "window.h"
+#include "physical-device.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -22,6 +23,7 @@ int main (void) {
 
     GLFWwindow * window = window_init();
     VkInstance instance = instance_init();
+    VkPhysicalDevice physicalDevice = physical_device_init(instance);
 
     // main loop
 
