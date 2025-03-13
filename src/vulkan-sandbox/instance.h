@@ -5,6 +5,6 @@
 #include <GLFW/glfw3.h>
 
 VkInstance instance_init (void);
-void instance_destroy (VkInstance * instance);
+void instance_destroy (VkInstance instance);
 
 #endif

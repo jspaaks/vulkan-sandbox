@@ -41,7 +41,6 @@ static const char * requestedExtensions[] = {
     "VK_KHR_xcb_surface",  // not sure why the enum equivalent of this is not recognized
     VK_KHR_SURFACE_EXTENSION_NAME,
     VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-    VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
 };
 static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
 static const char * requestedLayers[] = {
@@ -81,9 +80,8 @@ static void print_instance_extension_properties (const VkInstanceCreateInfo * cr
 static void print_instance_layer_properties (const VkInstanceCreateInfo * createInfo);
 
 
-void instance_destroy (VkInstance * instance) {
-    vkDestroyInstance(*instance, nullptr);
-    *instance = VK_NULL_HANDLE;
+void instance_destroy (VkInstance instance) {
+    vkDestroyInstance(instance, nullptr);
 }
 
 
