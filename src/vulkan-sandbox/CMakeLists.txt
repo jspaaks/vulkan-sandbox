@@ -43,6 +43,7 @@ target_compile_options(
         $<$<CONFIG:Debug>:-g>
         $<$<CONFIG:Debug>:-O0>
         $<$<CONFIG:Release>:-Werror>
+        $<$<CONFIG:Release>:-O2>
 )
 
 target_include_directories(
@@ -65,10 +66,16 @@ target_link_libraries(
 target_sources(
     tgt_exe_vulkan-sandbox
     PRIVATE
+        ${PROJECT_ROOT}/src/vulkan-sandbox/device/logical.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/device/physical.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/errors.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/instance.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/main.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/pipeline.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/queueing.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/shader-modules.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/surface.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/swapchain.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/window.c
 )
 
