@@ -2,11 +2,12 @@
 #include "messenger.h"
 #include "surface.h"
 #include "window.h"
-#include "physical-device.h"
+#include "physical-devices.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 
 void loop (GLFWwindow * window);
@@ -22,13 +23,17 @@ void loop (GLFWwindow * window) {
 int main (void) {
 
     // initialize resources
-
     GLFWwindow * window = window_init();
     VkInstance instance = instance_init();
-    VkSurfaceKHR surface = surface_init(instance, window);
-
     VkDebugUtilsMessengerEXT messenger = messenger_init(instance);
-    VkPhysicalDevice physicalDevice = physical_device_init(instance);
+    VkSurfaceKHR surface = surface_init(instance, window);
+    VkPhysicalDevice * devices = nullptr;
+    uint32_t ndevices = 0;
+    physical_devices_init(instance, &ndevices, &devices);
+    uint32_t idev = physical_devices_pick(ndevices, devices);
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(devices[idev], &deviceProperties);
+    fprintf(stdout, "Picked device %" PRIu32 ": %s\n", idev, deviceProperties.deviceName);
 
     // main loop
 
@@ -36,11 +41,12 @@ int main (void) {
 
     // clean up resources
 
-    messenger_destroy(instance, messenger);
+
+    physical_devices_destroy(devices);
     surface_destroy(instance, surface);
+    messenger_destroy(instance, messenger);
     instance_destroy(instance);
     window_destroy(window);
-
     return EXIT_SUCCESS;
 }
 

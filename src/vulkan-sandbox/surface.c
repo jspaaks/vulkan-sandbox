@@ -14,8 +14,6 @@ VkSurfaceKHR surface_init (VkInstance instance, GLFWwindow * window) {
     VkResult result = glfwCreateWindowSurface(instance, window, allocator, &surface);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Encountered problem creating a surface, aborting.\n");
-        instance_destroy(instance);
-        window_destroy(window);
         exit(EXIT_FAILURE);
     }
     return surface;

@@ -13,6 +13,14 @@ static void callback (GLFWwindow * window, int key, int, int action, int) {
     }
 }
 
+
+
+void window_destroy (GLFWwindow * window) {
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
+
+
 GLFWwindow * window_init (void) {
 
     if (glfwInit() != GLFW_TRUE) {
@@ -33,7 +41,6 @@ GLFWwindow * window_init (void) {
         window = glfwCreateWindow(width, height, title, monitor, share);
         if (window == nullptr) {
             fprintf(stderr, "Encountered error creating a window, aborting.\n");
-            glfwTerminate();
             exit(EXIT_FAILURE);
         }
     }
@@ -45,10 +52,4 @@ GLFWwindow * window_init (void) {
     }
 
     return window;
-}
-
-
-void window_destroy (GLFWwindow * window) {
-    glfwDestroyWindow(window);
-    glfwTerminate();
 }
