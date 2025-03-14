@@ -67,7 +67,9 @@ target_sources(
     tgt_exe_vulkan-sandbox
     PRIVATE
         ${PROJECT_ROOT}/src/vulkan-sandbox/errors.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/extensions.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/instance.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/layers.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/logical-device.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/main.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/messenger.c

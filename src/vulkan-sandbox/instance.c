@@ -1,5 +1,7 @@
 #include "instance.h"
 #include "errors.h"
+#include "extensions.h"
+#include "layers.h"
 
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
@@ -9,72 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if (defined DEBUG) && (defined _WIN32)
-#warning "Untested platform, list of requested layers might be inaccurate"
-static const char * requestedExtensions[] = {
-    "VK_KHR_win32_surface",
-    VK_KHR_SURFACE_EXTENSION_NAME,
-    VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-};
-static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
-static const char * requestedLayers[] = {
-    "VK_LAYER_KHRONOS_validation",
-};
-static const uint32_t nRequestedLayers = sizeof(requestedLayers) / sizeof(requestedLayers[0]);
-#elif (defined DEBUG) && (defined __APPLE__)
-#warning "Untested platform, list of requested layers might be inaccurate"
-static const char * requestedExtensions[] = {
-    "VK_MVK_macos_surface",
-    VK_KHR_SURFACE_EXTENSION_NAME,
-    VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-};
-static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
-static const char * requestedLayers[] = {
-    "VK_LAYER_KHRONOS_validation",
-};
-static const uint32_t nRequestedLayers = sizeof(requestedLayers) / sizeof(requestedLayers[0]);
-#elif (defined DEBUG)
-#if (!defined __linux__)
-#warning "Unsupported platform, assuming Linux"
-#endif
-static const char * requestedExtensions[] = {
-    "VK_KHR_xcb_surface",  // not sure why the enum equivalent of this is not recognized
-    VK_KHR_SURFACE_EXTENSION_NAME,
-    VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-};
-static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
-static const char * requestedLayers[] = {
-    "VK_LAYER_KHRONOS_validation",
-};
-static const uint32_t nRequestedLayers = sizeof(requestedLayers) / sizeof(requestedLayers[0]);
-#elif (!defined DEBUG) && (defined _WIN32)
-#warning "Untested platform, list of requested layers might be inaccurate"
-static const char * requestedExtensions[] = {
-    "VK_KHR_win32_surface",
-};
-static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
-static const char ** requestedLayers = nullptr;
-static const uint32_t nRequestedLayers = 0;
-#elif (!defined DEBUG) && (defined __APPLE__)
-#warning "Untested platform, list of requested layers might be inaccurate"
-static const char * requestedExtensions[] = {
-    "VK_MVK_macos_surface",
-};
-static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
-static const char ** requestedLayers = nullptr;
-static const uint32_t nRequestedLayers = 0;
-#elif (!defined DEBUG)
-#if (!defined __linux__)
-#warning "Unsupported platform, assuming Linux"
-#endif
-static const char * requestedExtensions[] = {
-    "VK_KHR_xcb_surface",
-    "VK_KHR_surface",
-};
-static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
-static const char ** requestedLayers = nullptr;
-static const uint32_t nRequestedLayers = 0;
-#endif
 
 static void print_instance_extension_properties (const VkInstanceCreateInfo * createInfo);
 static void print_instance_layer_properties (const VkInstanceCreateInfo * createInfo);
@@ -103,12 +39,12 @@ VkInstance instance_init (void) {
     };
 
     VkInstanceCreateInfo createInfo = {
-        .enabledExtensionCount = nRequestedExtensions,
-        .enabledLayerCount = nRequestedLayers,
+        .enabledExtensionCount = getRequestedExtensionsCount(),
+        .enabledLayerCount = getRequestedLayersCount(),
         .pApplicationInfo = &applicationInfo,
         .pNext = nullptr,
-        .ppEnabledExtensionNames = requestedExtensions,
-        .ppEnabledLayerNames = requestedLayers,
+        .ppEnabledExtensionNames = getRequestedExtensions(),
+        .ppEnabledLayerNames = getRequestedLayers(),
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
     };
 
