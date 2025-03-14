@@ -68,29 +68,31 @@ void messenger_destroy(VkInstance instance, VkDebugUtilsMessengerEXT messenger) 
     // Dark magic applied here for dynamically looking up the function
     // pointer for vkDestroyDebugUtilsMessengerEXT, see https://www.youtube.com/watch?v=g7Jlyk4Xp4o&t=225
 
-    PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessenger =
+    PFN_vkDestroyDebugUtilsMessengerEXT destroy =
             (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 
-    if (vkDestroyDebugUtilsMessenger == nullptr) {
+    if (destroy == nullptr) {
         fprintf(stderr, "Problem getting address of 'vkDestroyDebugUtilsMessengerEXT', aborting.\n");
         exit(EXIT_FAILURE);
     }
 
     VkAllocationCallbacks * allocator = nullptr;
-    vkDestroyDebugUtilsMessenger(instance, messenger, allocator);
+    destroy(instance, messenger, allocator);
 }
 
 
 VkDebugUtilsMessengerEXT messenger_init (VkInstance instance) {
     VkDebugUtilsMessengerCreateInfoEXT createInfo = {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-        .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-                           VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-                           VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                           VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-        .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                       VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                       VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+        .messageSeverity =
+//            VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+//            VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+        .messageType =
+            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
         .pfnUserCallback = &callback,
         .pUserData = nullptr,
     };
@@ -98,19 +100,19 @@ VkDebugUtilsMessengerEXT messenger_init (VkInstance instance) {
     // Dark magic applied here for dynamically looking up the function
     // pointer for vkCreateDebugUtilsMessengerEXT, see https://www.youtube.com/watch?v=g7Jlyk4Xp4o&t=225
 
-    PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessenger = 
+    PFN_vkCreateDebugUtilsMessengerEXT create = 
             (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 
-    if (vkCreateDebugUtilsMessenger == nullptr) {
+    if (create == nullptr) {
         fprintf(stderr, "Problem getting address of 'vkCreateDebugUtilsMessengerEXT', aborting.\n");
         exit(EXIT_FAILURE);
     }
 
     VkAllocationCallbacks * allocator = nullptr;
     VkDebugUtilsMessengerEXT messenger = VK_NULL_HANDLE;
-    VkResult result = vkCreateDebugUtilsMessenger(instance, &createInfo, allocator, &messenger);
+    VkResult result = create(instance, &createInfo, allocator, &messenger);
     if (result != VK_SUCCESS) {
-        fprintf(stderr, "Problem creating VkDebugUtilsMessengerEXT (%s), aborting.\n", stringify_vkresult(result));
+        fprintf(stderr, "Problem creating debug messenger (%s), aborting.\n", stringify_vkresult(result));
         exit(EXIT_FAILURE);
     }
 
