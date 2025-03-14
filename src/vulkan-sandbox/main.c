@@ -1,5 +1,6 @@
 #include "instance.h"
 #include "messenger.h"
+#include "surface.h"
 #include "window.h"
 #include "physical-device.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
@@ -24,6 +25,8 @@ int main (void) {
 
     GLFWwindow * window = window_init();
     VkInstance instance = instance_init();
+    VkSurfaceKHR surface = surface_init(instance, window);
+
     VkDebugUtilsMessengerEXT messenger = messenger_init(instance);
     VkPhysicalDevice physicalDevice = physical_device_init(instance);
 
@@ -34,8 +37,9 @@ int main (void) {
     // clean up resources
 
     messenger_destroy(instance, messenger);
+    surface_destroy(instance, surface);
     instance_destroy(instance);
-    window_destroy(&window);
+    window_destroy(window);
 
     return EXIT_SUCCESS;
 }
