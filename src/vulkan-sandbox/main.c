@@ -22,18 +22,17 @@ void loop (GLFWwindow * window) {
 
 int main (void) {
 
+    VkPhysicalDevice * devices = nullptr;
+    uint32_t ndevices = 0;
+
     // initialize resources
     GLFWwindow * window = window_init();
     VkInstance instance = instance_init();
     VkDebugUtilsMessengerEXT messenger = messenger_init(instance);
     VkSurfaceKHR surface = surface_init(instance, window);
-    VkPhysicalDevice * devices = nullptr;
-    uint32_t ndevices = 0;
     physical_devices_init(instance, &ndevices, &devices);
     uint32_t idev = physical_devices_pick(ndevices, devices);
-    VkPhysicalDeviceProperties deviceProperties;
-    vkGetPhysicalDeviceProperties(devices[idev], &deviceProperties);
-    fprintf(stdout, "Picked device %" PRIu32 ": %s\n", idev, deviceProperties.deviceName);
+    physical_devices_print_name(devices[idev]);
 
     // main loop
 

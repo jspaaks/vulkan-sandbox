@@ -75,3 +75,9 @@ uint32_t physical_devices_pick (const uint32_t ndevices, const VkPhysicalDevice 
     fprintf(stderr, "Encountered a problem picking a physical device -- none qualify. Aborting.\n");
     exit(EXIT_FAILURE);
 }
+
+void physical_devices_print_name(VkPhysicalDevice device) {
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(device, &deviceProperties);
+    fprintf(stdout, "Picked device %s\n", deviceProperties.deviceName);
+}
