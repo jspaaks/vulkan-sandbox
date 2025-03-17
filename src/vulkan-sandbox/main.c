@@ -1,9 +1,10 @@
 #include "instance.h"
 #include "messenger.h"
+#include "physical-device.h"
+#include "queue-family.h"
 #include "state.h"
 #include "surface.h"
 #include "window.h"
-#include "physical-device.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -31,7 +32,8 @@ int main (void) {
     messenger_init(&state);
     surface_init(&state);
     physical_device_init(&state);
-
+    queue_family_init(&state);
+    // logical_device_init(&state);
 
     // ---------------------   main loop   --------------------- //
 
@@ -39,6 +41,7 @@ int main (void) {
 
     // ----------------   clean up resources   ----------------- //
 
+    queue_family_destroy(&state);
     physical_device_destroy(&state);
     surface_destroy(&state);
     messenger_destroy(&state);

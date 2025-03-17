@@ -75,7 +75,7 @@ target_sources(
         ${PROJECT_ROOT}/src/vulkan-sandbox/messenger.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/physical-device.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/pipeline.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/queueing.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/queue-family.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/shader-modules.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/surface.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/swapchain.c
