@@ -1,4 +1,5 @@
 #include "errors.h"
+#include "state.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -63,13 +64,13 @@ error:
 }
 
 
-void messenger_destroy(VkInstance instance, VkDebugUtilsMessengerEXT messenger) {
+void messenger_destroy(State * state) {
 
     // Dark magic applied here for dynamically looking up the function
     // pointer for vkDestroyDebugUtilsMessengerEXT, see https://www.youtube.com/watch?v=g7Jlyk4Xp4o&t=225
 
     PFN_vkDestroyDebugUtilsMessengerEXT destroy =
-            (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+            (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(state->instance, "vkDestroyDebugUtilsMessengerEXT");
 
     if (destroy == nullptr) {
         fprintf(stderr, "Problem getting address of 'vkDestroyDebugUtilsMessengerEXT', aborting.\n");
@@ -77,11 +78,11 @@ void messenger_destroy(VkInstance instance, VkDebugUtilsMessengerEXT messenger) 
     }
 
     VkAllocationCallbacks * allocator = nullptr;
-    destroy(instance, messenger, allocator);
+    destroy(state->instance, state->messenger, allocator);
 }
 
 
-VkDebugUtilsMessengerEXT messenger_init (VkInstance instance) {
+void messenger_init (State * state) {
     VkDebugUtilsMessengerCreateInfoEXT createInfo = {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
         .messageSeverity =
@@ -101,20 +102,23 @@ VkDebugUtilsMessengerEXT messenger_init (VkInstance instance) {
     // pointer for vkCreateDebugUtilsMessengerEXT, see https://www.youtube.com/watch?v=g7Jlyk4Xp4o&t=225
 
     PFN_vkCreateDebugUtilsMessengerEXT create = 
-            (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+            (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(state->instance, "vkCreateDebugUtilsMessengerEXT");
 
     if (create == nullptr) {
         fprintf(stderr, "Problem getting address of 'vkCreateDebugUtilsMessengerEXT', aborting.\n");
         exit(EXIT_FAILURE);
     }
 
+    if (state->instance == VK_NULL_HANDLE) {
+        fprintf(stderr, "Didn't expect to find an uninitialized instance, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
+
     VkAllocationCallbacks * allocator = nullptr;
-    VkDebugUtilsMessengerEXT messenger = VK_NULL_HANDLE;
-    VkResult result = create(instance, &createInfo, allocator, &messenger);
+    state->messenger = VK_NULL_HANDLE;
+    VkResult result = create(state->instance, &createInfo, allocator, &state->messenger);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Problem creating debug messenger (%s), aborting.\n", stringify_vkresult(result));
         exit(EXIT_FAILURE);
     }
-
-    return messenger;
 }

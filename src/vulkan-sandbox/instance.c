@@ -2,6 +2,7 @@
 #include "errors.h"
 #include "extensions.h"
 #include "layers.h"
+#include "state.h"
 
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
@@ -16,12 +17,12 @@ static void print_instance_extension_properties (const VkInstanceCreateInfo * cr
 static void print_instance_layer_properties (const VkInstanceCreateInfo * createInfo);
 
 
-void instance_destroy (VkInstance instance) {
-    vkDestroyInstance(instance, nullptr);
+void instance_destroy (State * state) {
+    vkDestroyInstance(state->instance, nullptr);
 }
 
 
-VkInstance instance_init (void) {
+void instance_init (State * state) {
 
     if (glfwVulkanSupported() != GLFW_TRUE) {
         fprintf(stderr, "According to GLWF, Vulkan is not supported here, aborting.\n");
@@ -51,14 +52,12 @@ VkInstance instance_init (void) {
     print_instance_extension_properties(&createInfo);
     print_instance_layer_properties(&createInfo);
 
-    VkInstance instance = VK_NULL_HANDLE;
-    VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
+    state->instance = VK_NULL_HANDLE;
+    VkResult result = vkCreateInstance(&createInfo, nullptr, &state->instance);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Problem creating VkInstance (%s), aborting.\n", stringify_vkresult(result));
         exit(EXIT_FAILURE);
     }
-
-    return instance;
 }
 
 

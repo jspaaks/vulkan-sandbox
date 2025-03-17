@@ -1,5 +1,6 @@
 #include "instance.h"
 #include "messenger.h"
+#include "state.h"
 #include "surface.h"
 #include "window.h"
 #include "physical-devices.h"
@@ -10,11 +11,11 @@
 #include <inttypes.h>
 
 
-void loop (GLFWwindow * window);
-void cleanup (GLFWwindow * window);
+void loop (State * state);
+void cleanup (State * state);
 
-void loop (GLFWwindow * window) {
-    while (!glfwWindowShouldClose(window)) {
+void loop (State * state) {
+    while (!glfwWindowShouldClose(state->window)) {
         glfwPollEvents();
     }
 }
@@ -22,33 +23,29 @@ void loop (GLFWwindow * window) {
 
 int main (void) {
 
-    VkPhysicalDevice * devices = nullptr;
-    uint32_t ndevices = 0;
+    // --------------   initialize resources   ----------------- //
 
-    // initialize resources
-    GLFWwindow * window = window_init();
-    VkInstance instance = instance_init();
-    VkDebugUtilsMessengerEXT messenger = messenger_init(instance);
-    VkSurfaceKHR surface = surface_init(instance, window);
-    physical_devices_init(instance, &ndevices, &devices);
-    uint32_t idev = physical_devices_pick(ndevices, devices);
-    physical_devices_print_name(devices[idev]);
+    State state = {};
+    window_init(&state);
+    instance_init(&state);
+    messenger_init(&state);
+    surface_init(&state);
+    physical_devices_init(&state);
 
-    // main loop
+    // ---------------------   main loop   --------------------- //
 
-    loop(window);
+    loop(&state);
 
-    // clean up resources
+    // ----------------   clean up resources   ----------------- //
 
+    physical_devices_destroy(&state);
+    surface_destroy(&state);
+    messenger_destroy(&state);
+    instance_destroy(&state);
+    window_destroy(&state);
 
-    physical_devices_destroy(devices);
-    surface_destroy(instance, surface);
-    messenger_destroy(instance, messenger);
-    instance_destroy(instance);
-    window_destroy(window);
     return EXIT_SUCCESS;
 }
-
 
 //#include "HandmadeMath.h"
 //{

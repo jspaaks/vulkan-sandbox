@@ -1,3 +1,4 @@
+#include "state.h"
 #include "surface.h"
 #include "instance.h"
 #include "window.h"
@@ -8,18 +9,25 @@
 #include <stdlib.h>
 
 
-VkSurfaceKHR surface_init (VkInstance instance, GLFWwindow * window) {
+void surface_init (State * state) {
+    if (state->instance == VK_NULL_HANDLE) {
+        fprintf(stderr, "Didn't expect to find an uninitialized instance, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (state->window == VK_NULL_HANDLE) {
+        fprintf(stderr, "Didn't expect to find an uninitialized window, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
     const VkAllocationCallbacks * allocator = nullptr;
-    VkSurfaceKHR surface = VK_NULL_HANDLE;
-    VkResult result = glfwCreateWindowSurface(instance, window, allocator, &surface);
+    state->surface = VK_NULL_HANDLE;
+    VkResult result = glfwCreateWindowSurface(state->instance, state->window, allocator, &state->surface);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Encountered problem creating a surface, aborting.\n");
         exit(EXIT_FAILURE);
     }
-    return surface;
 }
 
-void surface_destroy (VkInstance instance, VkSurfaceKHR surface) {
+void surface_destroy (State * state) {
     const VkAllocationCallbacks * allocator = nullptr;
-    vkDestroySurfaceKHR(instance, surface, allocator);
+    vkDestroySurfaceKHR(state->instance, state->surface, allocator);
 }
