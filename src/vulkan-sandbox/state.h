@@ -11,6 +11,7 @@ struct state {
     VkDebugUtilsMessengerEXT messenger;
     VkPhysicalDevice physical_device;
     VkQueueFamilyProperties queue_family;
+    uint32_t queue;
     VkSurfaceKHR surface;
     GLFWwindow * window;
 };

@@ -27,7 +27,7 @@ static VkQueueFamilyProperties pick (State * state) {
             ipick = i;
         }
     }
-    fprintf(stdout, "     Picked queue family %" PRIu32 "\n", ipick);
+    fprintf(stdout, "     Picked queue family index %" PRIu32 "\n", ipick);
     return queue_families[ipick];
 }
 
