@@ -68,8 +68,9 @@ static void populate (State * state) {
 
 
 void physical_device_destroy (State * state) {
-    state->device = nullptr;
+    state->physical_device = VK_NULL_HANDLE;
     free(devices);
+    devices = nullptr;
     ndevices = 0;
 }
 
@@ -77,12 +78,11 @@ void physical_device_destroy (State * state) {
 void physical_device_init (State * state) {
     populate(state);
     print_devices();
-    state->device = pick();
-
+    state->physical_device = pick();
     {
         VkPhysicalDeviceProperties props;
-        vkGetPhysicalDeviceProperties(state->device, &props);
-        fprintf(stdout, "     Picked device '%s'\n", props.deviceName);
+        vkGetPhysicalDeviceProperties(state->physical_device, &props);
+        fprintf(stdout, "     Picked physical device '%s'\n", props.deviceName);
     }
 }
 
