@@ -3,7 +3,7 @@
 #include "state.h"
 #include "surface.h"
 #include "window.h"
-#include "physical-devices.h"
+#include "physical-device.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -30,7 +30,8 @@ int main (void) {
     instance_init(&state);
     messenger_init(&state);
     surface_init(&state);
-    physical_devices_init(&state);
+    physical_device_init(&state);
+
 
     // ---------------------   main loop   --------------------- //
 
@@ -38,7 +39,7 @@ int main (void) {
 
     // ----------------   clean up resources   ----------------- //
 
-    physical_devices_destroy(&state);
+    physical_device_destroy(&state);
     surface_destroy(&state);
     messenger_destroy(&state);
     instance_destroy(&state);

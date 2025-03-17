@@ -7,10 +7,9 @@
 typedef struct state State;
 
 struct state {
-    VkPhysicalDevice * devices;
+    VkPhysicalDevice device;
     VkInstance instance;
     VkDebugUtilsMessengerEXT messenger;
-    uint32_t ndevices;
     VkSurfaceKHR surface;
     GLFWwindow * window;
 };

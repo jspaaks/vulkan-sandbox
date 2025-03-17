@@ -73,7 +73,7 @@ target_sources(
         ${PROJECT_ROOT}/src/vulkan-sandbox/logical-device.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/main.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/messenger.c
-        ${PROJECT_ROOT}/src/vulkan-sandbox/physical-devices.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/physical-device.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/pipeline.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/queueing.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/shader-modules.c

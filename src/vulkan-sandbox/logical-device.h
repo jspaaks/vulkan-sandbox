@@ -1,5 +1,5 @@
-#ifndef DEVICE_LOGICAL_H
-#define DEVICE_LOGICAL_H
+#ifndef LOGICAL_DEVICE_H
+#define LOGICAL_DEVICE_H
 
 void logical_device_init (void);
 
