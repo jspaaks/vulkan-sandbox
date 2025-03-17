@@ -29,21 +29,14 @@ void instance_init (State * state) {
         exit(EXIT_FAILURE);
     }
 
-    VkApplicationInfo applicationInfo = {
-        .apiVersion = VK_API_VERSION_1_0,
-        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
-        .pApplicationName = "Hello Triangle",
-        .pEngineName = "No Engine",
-        .pNext = nullptr,
-        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-    };
-
     VkInstanceCreateInfo createInfo = {
         .enabledExtensionCount = getRequestedExtensionsCount(),
         .enabledLayerCount = getRequestedLayersCount(),
-        .pApplicationInfo = &applicationInfo,
-        .pNext = nullptr,
+        .pApplicationInfo = &(VkApplicationInfo){
+            .apiVersion = VK_API_VERSION_1_0,
+            .pApplicationName = "Hello Triangle",
+            .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        },
         .ppEnabledExtensionNames = getRequestedExtensions(),
         .ppEnabledLayerNames = getRequestedLayers(),
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
