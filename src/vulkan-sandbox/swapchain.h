@@ -1,9 +1,8 @@
 #ifndef SWAPCHAIN_H
 #define SWAPCHAIN_H
+#include "state.h"
 
-#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
-#include <GLFW/glfw3.h>
-
-void swapchain_init (void);
+void swapchain_destroy (State * state);
+void swapchain_init (State * state);
 
 #endif

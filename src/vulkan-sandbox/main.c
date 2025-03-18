@@ -6,6 +6,7 @@
 #include "queue-family.h"
 #include "state.h"
 #include "surface.h"
+#include "swapchain.h"
 #include "window.h"
 #define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
 #include <GLFW/glfw3.h>
@@ -37,6 +38,7 @@ int main (void) {
     queue_family_init(&state);
     queue_init(&state);
     logical_device_init(&state);
+    swapchain_init(&state);
 
     // ---------------------   main loop   --------------------- //
 
@@ -44,6 +46,7 @@ int main (void) {
 
     // ----------------   clean up resources   ----------------- //
 
+    swapchain_destroy(&state);
     logical_device_destroy(&state);
     queue_destroy(&state);
     queue_family_destroy(&state);

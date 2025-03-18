@@ -35,8 +35,8 @@ void logical_device_init (State * state) {
             .queueCount = 1,
             .pQueuePriorities = &priority[0],
         },
-        .enabledExtensionCount = 0,
-        .ppEnabledExtensionNames = nullptr,
+        .enabledExtensionCount = 1,
+        .ppEnabledExtensionNames = &(const char *){"VK_KHR_swapchain"},
         .pEnabledFeatures = nullptr,
     };
 
