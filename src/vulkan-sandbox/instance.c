@@ -13,8 +13,8 @@
 #include <string.h>
 
 
-static void print_instance_extension_properties (const VkInstanceCreateInfo * createInfo);
-static void print_instance_layer_properties (const VkInstanceCreateInfo * createInfo);
+static void print_instance_extension_properties (const VkInstanceCreateInfo * create_info);
+static void print_instance_layer_properties (const VkInstanceCreateInfo * create_info);
 
 
 void instance_destroy (State * state) {
@@ -29,7 +29,7 @@ void instance_init (State * state) {
         exit(EXIT_FAILURE);
     }
 
-    VkInstanceCreateInfo createInfo = {
+    VkInstanceCreateInfo create_info = {
         .enabledExtensionCount = getRequestedExtensionsCount(),
         .enabledLayerCount = getRequestedLayersCount(),
         .pApplicationInfo = &(VkApplicationInfo){
@@ -42,11 +42,11 @@ void instance_init (State * state) {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
     };
 
-    print_instance_extension_properties(&createInfo);
-    print_instance_layer_properties(&createInfo);
+    print_instance_extension_properties(&create_info);
+    print_instance_layer_properties(&create_info);
 
     state->instance = VK_NULL_HANDLE;
-    VkResult result = vkCreateInstance(&createInfo, nullptr, &state->instance);
+    VkResult result = vkCreateInstance(&create_info, nullptr, &state->instance);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Problem creating VkInstance (%s), aborting.\n", stringify_vkresult(result));
         exit(EXIT_FAILURE);
@@ -54,7 +54,7 @@ void instance_init (State * state) {
 }
 
 
-static void print_instance_extension_properties (const VkInstanceCreateInfo * createInfo) {
+static void print_instance_extension_properties (const VkInstanceCreateInfo * create_info) {
     uint32_t nextensions;
     vkEnumerateInstanceExtensionProperties(nullptr, &nextensions, nullptr);
     fprintf(stdout, "InstanceExtensionProperties (%" PRIu32 "):\n", nextensions);
@@ -62,8 +62,8 @@ static void print_instance_extension_properties (const VkInstanceCreateInfo * cr
     vkEnumerateInstanceExtensionProperties(nullptr, &nextensions, extensions);
     for (size_t i = 0; i < nextensions; i++) {
         bool enabled = false;
-        for (uint32_t j = 0; j < createInfo->enabledExtensionCount; j++) {
-            if (strcmp(extensions[i].extensionName, createInfo->ppEnabledExtensionNames[j]) == 0) {
+        for (uint32_t j = 0; j < create_info->enabledExtensionCount; j++) {
+            if (strcmp(extensions[i].extensionName, create_info->ppEnabledExtensionNames[j]) == 0) {
                 enabled = true;
                 break;
             }
@@ -74,7 +74,7 @@ static void print_instance_extension_properties (const VkInstanceCreateInfo * cr
 }
 
 
-static void print_instance_layer_properties (const VkInstanceCreateInfo * createInfo) {
+static void print_instance_layer_properties (const VkInstanceCreateInfo * create_info) {
     uint32_t nlayers = 0;
     vkEnumerateInstanceLayerProperties(&nlayers, nullptr);
     fprintf(stdout, "InstanceLayerProperties (%" PRIu32 "):\n", nlayers);
@@ -82,8 +82,8 @@ static void print_instance_layer_properties (const VkInstanceCreateInfo * create
     vkEnumerateInstanceLayerProperties(&nlayers, layers);
     for (size_t i = 0; i < nlayers; i++) {
         bool enabled = false;
-        for (uint32_t j = 0; j < createInfo->enabledLayerCount; j++) {
-            if (strcmp(layers[i].layerName, createInfo->ppEnabledLayerNames[j]) == 0) {
+        for (uint32_t j = 0; j < create_info->enabledLayerCount; j++) {
+            if (strcmp(layers[i].layerName, create_info->ppEnabledLayerNames[j]) == 0) {
                 enabled = true;
                 break;
             }

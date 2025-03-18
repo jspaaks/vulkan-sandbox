@@ -83,7 +83,7 @@ void messenger_destroy(State * state) {
 
 
 void messenger_init (State * state) {
-    VkDebugUtilsMessengerCreateInfoEXT createInfo = {
+    VkDebugUtilsMessengerCreateInfoEXT create_info = {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
         .messageSeverity =
 //            VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
@@ -116,7 +116,7 @@ void messenger_init (State * state) {
 
     VkAllocationCallbacks * allocator = nullptr;
     state->messenger = VK_NULL_HANDLE;
-    VkResult result = create(state->instance, &createInfo, allocator, &state->messenger);
+    VkResult result = create(state->instance, &create_info, allocator, &state->messenger);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Problem creating debug messenger (%s), aborting.\n", stringify_vkresult(result));
         exit(EXIT_FAILURE);

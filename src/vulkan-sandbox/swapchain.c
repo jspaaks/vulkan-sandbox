@@ -74,7 +74,7 @@ void swapchain_destroy (State * state) {
 
 
 void swapchain_init (State * state) {
-    VkSwapchainCreateInfoKHR createInfo = {
+    VkSwapchainCreateInfoKHR create_info = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .pNext = nullptr,
         .flags = 0,
@@ -96,7 +96,7 @@ void swapchain_init (State * state) {
     };
 
     VkAllocationCallbacks * allocator = nullptr;
-    VkResult result = vkCreateSwapchainKHR(state->logical_device, &createInfo, allocator, &state->swapchain);
+    VkResult result = vkCreateSwapchainKHR(state->logical_device, &create_info, allocator, &state->swapchain);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Encountered error during creation of swapchain, aborting.\n");
         exit(EXIT_FAILURE);

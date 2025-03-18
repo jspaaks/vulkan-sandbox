@@ -22,7 +22,7 @@ void logical_device_init (State * state) {
 
     float priority[1] = { 1.0f };
 
-    VkDeviceCreateInfo createInfo = {
+    VkDeviceCreateInfo create_info = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
@@ -41,7 +41,7 @@ void logical_device_init (State * state) {
     };
 
     const VkAllocationCallbacks * allocator =  nullptr;
-    VkResult result = vkCreateDevice(state->physical_device, &createInfo, allocator, &state->logical_device);
+    VkResult result = vkCreateDevice(state->physical_device, &create_info, allocator, &state->logical_device);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Encountered error creating a logical device, aborting.\n");
         exit(EXIT_FAILURE);
