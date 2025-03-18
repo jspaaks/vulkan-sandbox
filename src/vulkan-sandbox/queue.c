@@ -12,6 +12,6 @@ void queue_init (State * state) {
         fprintf(stderr, "Selected queue family doesn't have any queues, aborting.\n");
         exit(EXIT_FAILURE);
     }
-    state->queue = 0;
-    fprintf(stdout, "     Picked queue index %" PRIu32 "\n", state->queue);
+    state->queue_index = 0;
+    fprintf(stdout, "     Picked queue index %" PRIu32 "\n", state->queue_index);
 }

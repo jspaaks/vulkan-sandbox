@@ -12,12 +12,12 @@ static VkQueueFamilyProperties * queue_families = nullptr;
 static uint32_t nfamilies = 0;
 
 
-static VkQueueFamilyProperties pick (State * state);
+static void pick (State * state);
 static void populate (State * state);
 static void print_queue_families (State * state);
 
 
-static VkQueueFamilyProperties pick (State * state) {
+static void pick (State * state) {
     uint32_t ipick = UINT32_MAX;
     for (uint32_t i = 0; i < nfamilies; i++) {
         bool cond1 = (bool) (queue_families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT);
@@ -28,7 +28,8 @@ static VkQueueFamilyProperties pick (State * state) {
         }
     }
     fprintf(stdout, "     Picked queue family index %" PRIu32 "\n", ipick);
-    return queue_families[ipick];
+    state->queue_family = queue_families[ipick];
+    state->queue_family_index = ipick;
 }
 
 
@@ -69,12 +70,13 @@ static void print_queue_families (State * state) {
 void queue_family_init (State * state) {
     populate(state);
     print_queue_families(state);
-    state->queue_family = pick(state);
+    pick(state);
 }
 
 
 void queue_family_destroy (State * state) {
     state->queue_family = (VkQueueFamilyProperties){};
+    state->queue_family_index = UINT32_MAX;
     free(queue_families);
     queue_families = nullptr;
     nfamilies = 0;

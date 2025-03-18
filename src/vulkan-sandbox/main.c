@@ -1,4 +1,5 @@
 #include "instance.h"
+#include "logical-device.h"
 #include "messenger.h"
 #include "physical-device.h"
 #include "queue.h"
@@ -35,7 +36,7 @@ int main (void) {
     physical_device_init(&state);
     queue_family_init(&state);
     queue_init(&state);
-    // logical_device_init(&state);
+    logical_device_init(&state);
 
     // ---------------------   main loop   --------------------- //
 
@@ -43,6 +44,7 @@ int main (void) {
 
     // ----------------   clean up resources   ----------------- //
 
+    logical_device_destroy(&state);
     queue_destroy(&state);
     queue_family_destroy(&state);
     physical_device_destroy(&state);

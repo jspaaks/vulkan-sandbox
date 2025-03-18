@@ -8,10 +8,12 @@ typedef struct state State;
 
 struct state {
     VkInstance instance;
+    VkDevice logical_device;
     VkDebugUtilsMessengerEXT messenger;
     VkPhysicalDevice physical_device;
     VkQueueFamilyProperties queue_family;
-    uint32_t queue;
+    uint32_t queue_family_index;
+    uint32_t queue_index;
     VkSurfaceKHR surface;
     GLFWwindow * window;
 };
