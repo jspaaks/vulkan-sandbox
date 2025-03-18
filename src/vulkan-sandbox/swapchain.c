@@ -6,9 +6,9 @@
 
 
 static VkExtent2D get_extent (State * state);
-static VkSurfaceFormatKHR get_surface_format (State * state);
-static VkColorSpaceKHR get_image_color_space (State * state);
-static VkFormat get_image_format (State * state);
+static VkSurfaceFormatKHR get_first_supported_surface_format (State * state);
+static VkColorSpaceKHR get_first_supported_image_color_space (State * state);
+static VkFormat get_first_supported_image_format (State * state);
 
 
 static VkExtent2D get_extent (State * state) {
@@ -24,7 +24,7 @@ static VkExtent2D get_extent (State * state) {
 }
 
 
-static VkSurfaceFormatKHR get_surface_format (State * state) {
+static VkSurfaceFormatKHR get_first_supported_surface_format (State * state) {
     uint32_t nformats = 0;
     {
         VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR (state->physical_device,
@@ -55,14 +55,14 @@ static VkSurfaceFormatKHR get_surface_format (State * state) {
 }
 
 
-static VkColorSpaceKHR get_image_color_space (State * state) {
-    VkSurfaceFormatKHR surface_format = get_surface_format(state);
+static VkColorSpaceKHR get_first_supported_image_color_space (State * state) {
+    VkSurfaceFormatKHR surface_format = get_first_supported_surface_format(state);
     return surface_format.colorSpace;
 }
 
 
-static VkFormat get_image_format (State * state) {
-    VkSurfaceFormatKHR surface_format = get_surface_format(state);
+static VkFormat get_first_supported_image_format (State * state) {
+    VkSurfaceFormatKHR surface_format = get_first_supported_surface_format(state);
     return surface_format.format;
 }
 
@@ -80,8 +80,8 @@ void swapchain_init (State * state) {
         .flags = 0,
         .surface = state->surface,
         .minImageCount = 3,
-        .imageFormat = get_image_format(state),
-        .imageColorSpace = get_image_color_space(state),
+        .imageFormat = get_first_supported_image_format(state),
+        .imageColorSpace = get_first_supported_image_color_space(state),
         .imageExtent = get_extent(state),
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
