@@ -6,6 +6,10 @@
 #include <stdlib.h>
 
 
+// TODO: use vkEnumerateDeviceExtensionProperties to list the extensions that are present, then
+// verify that the list of required extensions its subset.
+
+
 void logical_device_destroy (State * state) {
     VkResult result = vkDeviceWaitIdle(state->logical_device);
     if (result != VK_SUCCESS) {
