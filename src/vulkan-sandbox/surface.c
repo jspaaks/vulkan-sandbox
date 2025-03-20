@@ -9,6 +9,12 @@
 #include <stdlib.h>
 
 
+void surface_destroy (State * state) {
+    const VkAllocationCallbacks * allocator = nullptr;
+    vkDestroySurfaceKHR(state->instance, state->surface, allocator);
+}
+
+
 void surface_init (State * state) {
     if (state->instance == VK_NULL_HANDLE) {
         fprintf(stderr, "Didn't expect to find an uninitialized instance, aborting.\n");
@@ -25,9 +31,4 @@ void surface_init (State * state) {
         fprintf(stderr, "Encountered problem creating a surface, aborting.\n");
         exit(EXIT_FAILURE);
     }
-}
-
-void surface_destroy (State * state) {
-    const VkAllocationCallbacks * allocator = nullptr;
-    vkDestroySurfaceKHR(state->instance, state->surface, allocator);
 }
