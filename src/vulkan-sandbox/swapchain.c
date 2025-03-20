@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 
+static VkSurfaceFormatKHR * formats = nullptr;
+
+
 static VkExtent2D get_extent (State * state);
 static VkSurfaceFormatKHR get_first_supported_surface_format (State * state);
 static VkColorSpaceKHR get_first_supported_image_color_space (State * state);
@@ -40,7 +43,7 @@ static VkSurfaceFormatKHR get_first_supported_surface_format (State * state) {
         fprintf(stderr, "The surface does not support any image formats, aborting.\n");
         exit(EXIT_FAILURE);
     }
-    VkSurfaceFormatKHR * formats = malloc(nformats * sizeof(VkSurfaceFormatKHR));
+    formats = malloc(nformats * sizeof(VkSurfaceFormatKHR));
     {
         VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR (state->physical_device,
                                                                 state->surface,
@@ -70,6 +73,8 @@ static VkFormat get_first_supported_image_format (State * state) {
 void swapchain_destroy (State * state) {
     VkAllocationCallbacks * allocator = nullptr;
     vkDestroySwapchainKHR(state->logical_device, state->swapchain, allocator);
+    free(formats);
+    formats = nullptr;
 }
 
 
