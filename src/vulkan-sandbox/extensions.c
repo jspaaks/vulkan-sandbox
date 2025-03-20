@@ -1,21 +1,28 @@
 #include "extensions.h"
 #include <stdint.h>
-#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
-#include <GLFW/glfw3.h>
+
+// see https://registry.khronos.org/vulkan/specs/latest/man/html/WSIheaders.html for information on
+// extension names and controlling macros
 
 
 #if (defined DEBUG) && (defined _WIN32)
 #warning "Untested platform, list of requested layers might be inaccurate"
+#define VK_USE_PLATFORM_WIN32_KHR
+#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
+#include <GLFW/glfw3.h>
 static const char * requestedExtensions[] = {
-    "VK_KHR_win32_surface",
+    VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
     VK_KHR_SURFACE_EXTENSION_NAME,
     VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 };
 static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
 #elif (defined DEBUG) && (defined __APPLE__)
 #warning "Untested platform, list of requested layers might be inaccurate"
+#define VK_USE_PLATFORM_MACOS_MVK
+#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
+#include <GLFW/glfw3.h>
 static const char * requestedExtensions[] = {
-    "VK_MVK_macos_surface",
+    VK_MVK_MACOS_SURFACE_EXTENSION_NAME,
     VK_KHR_SURFACE_EXTENSION_NAME,
     VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 };
@@ -24,31 +31,43 @@ static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeo
 #if (!defined __linux__)
 #warning "Unsupported platform, assuming Linux"
 #endif
+#define VK_USE_PLATFORM_XCB_KHR
+#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
+#include <GLFW/glfw3.h>
 static const char * requestedExtensions[] = {
-    "VK_KHR_xcb_surface",  // not sure why the enum equivalent of this is not recognized
+    VK_KHR_XCB_SURFACE_EXTENSION_NAME,  // not sure why the enum equivalent of this is not recognized
     VK_KHR_SURFACE_EXTENSION_NAME,
     VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 };
 static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
 #elif (!defined DEBUG) && (defined _WIN32)
 #warning "Untested platform, list of requested layers might be inaccurate"
+#define VK_USE_PLATFORM_WIN32_KHR
+#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
+#include <GLFW/glfw3.h>
 static const char * requestedExtensions[] = {
-    "VK_KHR_win32_surface",
+    VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
 };
 static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
 #elif (!defined DEBUG) && (defined __APPLE__)
 #warning "Untested platform, list of requested layers might be inaccurate"
+#define VK_USE_PLATFORM_MACOS_MVK
+#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
+#include <GLFW/glfw3.h>
 static const char * requestedExtensions[] = {
-    "VK_MVK_macos_surface",
+    VK_MVK_MACOS_SURFACE_EXTENSION_NAME,
 };
 static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
 #elif (!defined DEBUG)
 #if (!defined __linux__)
+#define VK_USE_PLATFORM_XCB_KHR
+#define GLFW_INCLUDE_VULKAN   // Delegate including Vulkan to GLFW
+#include <GLFW/glfw3.h>
 #warning "Unsupported platform, assuming Linux"
 #endif
 static const char * requestedExtensions[] = {
-    "VK_KHR_xcb_surface",
-    "VK_KHR_surface",
+    VK_KHR_XCB_SURFACE_EXTENSION_NAME,
+    VK_KHR_SURFACE_EXTENSION_NAME,
 };
 static const uint32_t nRequestedExtensions = sizeof(requestedExtensions) / sizeof(requestedExtensions[0]);
 #endif
