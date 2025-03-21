@@ -35,8 +35,8 @@ int main (void) {
     surface_init(&state);
     physical_device_init(&state);
     queue_family_init(&state);
-    queue_init(&state);
     logical_device_init(&state);
+    queue_init(&state);
     swapchain_init(&state);
 
     // ---------------------   main loop   --------------------- //
@@ -46,8 +46,8 @@ int main (void) {
     // ----------------   clean up resources   ----------------- //
 
     swapchain_destroy(&state);
-    logical_device_destroy(&state);
     queue_destroy(&state);
+    logical_device_destroy(&state);
     queue_family_destroy(&state);
     physical_device_destroy(&state);
     surface_destroy(&state);
