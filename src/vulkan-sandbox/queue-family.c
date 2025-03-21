@@ -17,13 +17,21 @@ static void print_queue_families (State * state);
 
 static void pick (State * state) {
     uint32_t ipick = UINT32_MAX;
-    for (uint32_t i = 0; i < nfamilies; i++) {
-        bool cond1 = (bool) (queue_families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT);
-        VkBool32 cond2 = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(state->physical_device, i, state->surface, &cond2);
-        if (cond1 && cond2) {
-            ipick = i;
+    for (uint32_t ifamily = 0; ifamily < nfamilies; ifamily++) {
+        {
+            bool has_graphics = queue_families[ifamily].queueFlags & VK_QUEUE_GRAPHICS_BIT;
+            if (!has_graphics) continue;
         }
+        {
+            VkBool32 supports_presentation = VK_FALSE;
+            vkGetPhysicalDeviceSurfaceSupportKHR(state->physical_device, ifamily, state->surface, &supports_presentation);
+            if (!supports_presentation) continue;
+        }
+        ipick = ifamily;
+    }
+    if (ipick == UINT32_MAX) {
+        fprintf(stderr, "Unable to pick a queue family, aborting.\n");
+        exit(EXIT_FAILURE);
     }
     fprintf(stdout, "     Picked queue family index %" PRIu32 "\n", ipick);
     state->queue_family = queue_families[ipick];
@@ -37,6 +45,10 @@ static void populate (State * state) {
         exit(EXIT_FAILURE);
     }
     vkGetPhysicalDeviceQueueFamilyProperties(state->physical_device, &nfamilies, nullptr);
+    if (nfamilies == 0) {
+        fprintf(stderr, "No queue families found, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
     queue_families = malloc(nfamilies * sizeof(VkQueueFamilyProperties));
     if (queue_families == nullptr) {
         fprintf(stderr, "Encountered error while allocating memory for array of queue families, aborting.\n");
