@@ -57,6 +57,10 @@ static void populate (State * state) {
         exit(EXIT_FAILURE);
     }
     vkEnumeratePhysicalDevices(state->instance, &ndevices, nullptr);
+    if (ndevices == 0) {
+        fprintf(stderr, "No physical devices found, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
     devices = malloc(ndevices * sizeof(VkPhysicalDevice));
     if (devices == nullptr) {
         fprintf(stderr, "Encountered error while allocating memory for array of physical devices, aborting.\n");
