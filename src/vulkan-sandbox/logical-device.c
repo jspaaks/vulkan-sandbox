@@ -40,7 +40,7 @@ void logical_device_init (State * state) {
         },
         .enabledExtensionCount = 1,
         .ppEnabledExtensionNames = &(const char *){VK_KHR_SWAPCHAIN_EXTENSION_NAME},
-        .pEnabledFeatures = nullptr,
+        .pEnabledFeatures = &(const VkPhysicalDeviceFeatures){},
     };
 
     const VkAllocationCallbacks * allocator =  nullptr;
