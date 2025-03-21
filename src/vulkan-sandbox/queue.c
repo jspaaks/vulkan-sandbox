@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 void queue_destroy (State *) {
-    // pass
+    // No need to destroy anything.
 }
 
 
@@ -12,6 +12,15 @@ void queue_init (State * state) {
         fprintf(stderr, "Selected queue family doesn't have any queues, aborting.\n");
         exit(EXIT_FAILURE);
     }
+    if (state->logical_device == nullptr) {
+        fprintf(stderr, "Logical device is nullptr, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
+    // arbitrarily choose the first queue:
     state->queue_index = 0;
+    vkGetDeviceQueue(state->logical_device,
+                     state->queue_family_index,
+                     state->queue_index,
+                     &state->queue);
     fprintf(stdout, "     Picked queue index %" PRIu32 "\n", state->queue_index);
 }
