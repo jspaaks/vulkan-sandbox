@@ -18,11 +18,8 @@ void logical_device_destroy (State * state) {
     state->logical_device = VK_NULL_HANDLE;
 }
 
-
 void logical_device_init (State * state) {
-
     float priority[1] = { 1.0f };
-
     VkDeviceCreateInfo create_info = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .pNext = nullptr,
@@ -40,9 +37,7 @@ void logical_device_init (State * state) {
         .ppEnabledExtensionNames = &(const char *){VK_KHR_SWAPCHAIN_EXTENSION_NAME},
         .pEnabledFeatures = &(const VkPhysicalDeviceFeatures){},
     };
-
     verify_extension_support(state, &create_info);
-
     const VkAllocationCallbacks * allocator =  nullptr;
     VkResult result = vkCreateDevice(state->physical_device, &create_info, allocator, &state->logical_device);
     if (result != VK_SUCCESS) {
