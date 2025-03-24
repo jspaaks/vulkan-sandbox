@@ -3,127 +3,199 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static uint32_t nformats = 0;
+static uint32_t nmodes = 0;
+static VkSurfaceCapabilitiesKHR capabilities = {};
+static VkSurfaceFormatKHR * formats = nullptr;
+static VkPresentModeKHR * modes = nullptr;
+static bool populated = false;
+
+static uint32_t clamp (uint32_t candidate, uint32_t lower, uint32_t upper);
 static VkExtent2D get_extent (State * state);
-static VkPresentModeKHR pick_present_mode(State * state);
-static VkSurfaceFormatKHR pick_surface_format (State * state);
+static uint32_t get_image_count (void);
+static VkPresentModeKHR pick_present_mode (void);
+static VkSurfaceFormatKHR pick_surface_format (void);
+static void populate (State * state);
+
+static uint32_t clamp (uint32_t candidate, uint32_t lower, uint32_t upper) {
+    if (candidate < lower) return lower;
+    if (candidate > upper) return upper;
+    return candidate;
+}
 
 static VkExtent2D get_extent (State * state) {
-    VkSurfaceCapabilitiesKHR surface_capabilities = {};
-    VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(state->physical_device,
-                                                                state->surface,
-                                                                &surface_capabilities);
-    if (result != VK_SUCCESS) {
-        fprintf(stderr, "Encountered error while retrieving surface capabilities, aborting.\n");
+    if (!populated) {
+        fprintf(stderr, "Need to populate VkSurfaceCapabilitiesKHR struct first, aborting.\n");
         exit(EXIT_FAILURE);
     }
-    fprintf(stderr, "TODO extent properties\n");
-    exit(EXIT_FAILURE);
-    return surface_capabilities.currentExtent;
+    if (capabilities.currentExtent.width == UINT32_MAX) {
+        int width = -1;
+        int height = -1;
+        glfwGetFramebufferSize(state->window, &width, &height);
+        return (VkExtent2D) {
+            .width = clamp(width,
+                           capabilities.minImageExtent.width,
+                           capabilities.maxImageExtent.width),
+            .height = clamp(height,
+                            capabilities.minImageExtent.height,
+                            capabilities.maxImageExtent.height),
+        };
+    }
+    return capabilities.currentExtent;
 }
 
-static VkPresentModeKHR pick_present_mode (State * state) {
-    uint32_t nmodes = 0;
-    {
-        VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(state->physical_device,
-                                                                    state->surface,
-                                                                    &nmodes,
-                                                                    nullptr);
-        if (result != VK_SUCCESS) {
-            fprintf(stderr, "Encountered problem counting the number of present modes supported by surface, aborting.\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    if (nmodes == 0) {
-        fprintf(stderr, "The surface does not support any present modes, aborting.\n");
+static uint32_t get_image_count (void) {
+    if (!populated) {
+        fprintf(stderr, "Need to populate VkSurfaceCapabilitiesKHR struct first, aborting.\n");
         exit(EXIT_FAILURE);
     }
-    VkPresentModeKHR * present_modes = malloc(nmodes * sizeof(VkPresentModeKHR));
-    {
-        VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(state->physical_device,
-                                                                    state->surface,
-                                                                    &nmodes,
-                                                                    present_modes);
-        if (result != VK_SUCCESS) {
-            fprintf(stderr, "Encountered problem populating the array of present modes supported by surface, aborting.\n");
-            exit(EXIT_FAILURE);
-        }
+    uint32_t count = capabilities.minImageCount + 1;
+    bool max_applies = capabilities.maxImageCount > 0;  // maxImageCount 0 means no maximum
+    bool toobig = count > capabilities.maxImageCount;
+    if (max_applies && toobig) {
+        return capabilities.maxImageCount;
     }
-    VkPresentModeKHR present_mode = VK_PRESENT_MODE_FIFO_KHR;
+    return count;
+}
+
+static VkPresentModeKHR pick_present_mode (void) {
+    if (!populated) {
+        fprintf(stderr, "Need to populate VkPresentModeKHR struct first, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
+    VkPresentModeKHR mode = VK_PRESENT_MODE_FIFO_KHR;
     for (uint32_t i = 0; i < nmodes; i++) {
-        if (present_modes[i] == VK_PRESENT_MODE_MAILBOX_KHR) {
-            present_mode = present_modes[i];
+        if (modes[i] == VK_PRESENT_MODE_MAILBOX_KHR) {
+            mode = modes[i];
             break;
         }
     }
-    free(present_modes);
-    present_modes = nullptr;
-    nmodes = 0;
-    return present_mode;
+    return mode;
 }
 
 
-static VkSurfaceFormatKHR pick_surface_format (State * state) {
-    uint32_t nformats = 0;
-    {
-        VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(state->physical_device,
-                                                               state->surface,
-                                                               &nformats,
-                                                               nullptr);
-        if (result != VK_SUCCESS) {
-            fprintf(stderr, "Encountered problem counting the number of formats supported by surface, aborting.\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    if (nformats == 0) {
-        fprintf(stderr, "The surface does not support any image formats, aborting.\n");
+static VkSurfaceFormatKHR pick_surface_format (void) {
+    if (!populated) {
+        fprintf(stderr, "Need to populate VkSurfaceFormatKHR struct first, aborting.\n");
         exit(EXIT_FAILURE);
     }
-    VkSurfaceFormatKHR * surface_formats = malloc(nformats * sizeof(VkSurfaceFormatKHR));
-    {
-        VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(state->physical_device,
-                                                               state->surface,
-                                                               &nformats,
-                                                               surface_formats);
-        if (result != VK_SUCCESS) {
-            fprintf(stderr, "Encountered problem populating the array of formats supported by surface, aborting.\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    VkSurfaceFormatKHR surface_format = surface_formats[0];
+    VkSurfaceFormatKHR format = formats[0];
     for (uint32_t i = 0; i < nformats; i++) {
-        bool a = surface_formats[i].format == VK_FORMAT_B8G8R8A8_SRGB;
-        bool b = surface_formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+        bool a = formats[i].format == VK_FORMAT_B8G8R8A8_SRGB;
+        bool b = formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
         if (a && b) {
-            surface_format = surface_formats[i];
+            format = formats[i];
             break;
         }
     }
-    free(surface_formats);
-    surface_formats = nullptr;
-    nformats = 0;
-    return surface_format;
+    return format;
 }
 
+static void populate (State * state) {
+    // populate surface capabilities
+    {
+        VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(state->physical_device,
+                                                                    state->surface,
+                                                                    &capabilities);
+        if (result != VK_SUCCESS) {
+            fprintf(stderr, "Encountered error while retrieving surface capabilities, aborting.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // populate present modes
+    {
+        {
+            VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(state->physical_device,
+                                                                        state->surface,
+                                                                        &nmodes,
+                                                                        nullptr);
+            if (result != VK_SUCCESS) {
+                fprintf(stderr, "Encountered problem counting the number of present modes supported by surface, aborting.\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if (nmodes == 0) {
+            fprintf(stderr, "The surface does not support any present modes, aborting.\n");
+            exit(EXIT_FAILURE);
+        }
+        modes = malloc(nmodes * sizeof(VkPresentModeKHR));
+        {
+            VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(state->physical_device,
+                                                                        state->surface,
+                                                                        &nmodes,
+                                                                        modes);
+            if (result != VK_SUCCESS) {
+                fprintf(stderr, "Encountered problem populating the array of present modes supported by surface, aborting.\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    // populate surface formats
+    {
+        {
+            VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(state->physical_device,
+                                                                   state->surface,
+                                                                   &nformats,
+                                                                   nullptr);
+            if (result != VK_SUCCESS) {
+                fprintf(stderr, "Encountered problem counting the number of formats supported by surface, aborting.\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if (nformats == 0) {
+            fprintf(stderr, "The surface does not support any image formats, aborting.\n");
+            exit(EXIT_FAILURE);
+        }
+        formats = malloc(nformats * sizeof(VkSurfaceFormatKHR));
+        {
+            VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(state->physical_device,
+                                                                   state->surface,
+                                                                   &nformats,
+                                                                   formats);
+            if (result != VK_SUCCESS) {
+                fprintf(stderr, "Encountered problem populating the array of formats supported by surface, aborting.\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    populated = true;
+}
 
 void swapchain_destroy (State * state) {
     VkAllocationCallbacks * allocator = nullptr;
     vkDestroySwapchainKHR(state->logical_device, state->swapchain, allocator);
+
+    // free static surface format variables
+    free(formats);
+    formats = nullptr;
+    nformats = 0;
+
+    // reset static capabilities struct
+    capabilities = (VkSurfaceCapabilitiesKHR) {};
+
+    // free static surface present mode variables
+    free(modes);
+    modes = nullptr;
+    nmodes = 0;
+
+    // reset populated indicator
+    populated = false;
 }
 
-
 void swapchain_init (State * state) {
-    VkSurfaceFormatKHR surface_format = pick_surface_format(state);
-    VkExtent2D extent = get_extent(state);
-    VkPresentModeKHR present_mode = pick_present_mode(state);
+    populate(state);
     VkSwapchainCreateInfoKHR create_info = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .pNext = nullptr,
         .flags = 0,
         .surface = state->surface,
-        .minImageCount = 3,
-        .imageFormat = surface_format.format,
-        .imageColorSpace = surface_format.colorSpace,
-        .imageExtent = extent,
+        .minImageCount = get_image_count(),
+        .imageFormat = pick_surface_format().format,
+        .imageColorSpace = pick_surface_format().colorSpace,
+        .imageExtent = get_extent(state),
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
@@ -131,7 +203,7 @@ void swapchain_init (State * state) {
         .pQueueFamilyIndices = nullptr,
         .preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-        .presentMode = present_mode,
+        .presentMode = pick_present_mode(),
         .clipped = VK_TRUE,
         .oldSwapchain = VK_NULL_HANDLE,
     };
@@ -141,4 +213,5 @@ void swapchain_init (State * state) {
         fprintf(stderr, "Encountered error during creation of swapchain, aborting.\n");
         exit(EXIT_FAILURE);
     }
+    fprintf(stderr, "TODO need to retrieve the swap chain images\n");
 }
