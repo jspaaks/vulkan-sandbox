@@ -1,7 +1,7 @@
 #include "couple.h"
-#include "instance.h"
 #include "errors.h"
 #include "extensions.h"
+#include "instance.h"
 #include "layers.h"
 #include "state.h"
 #include "glfw-and-vulkan.h"
