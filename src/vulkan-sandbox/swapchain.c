@@ -218,15 +218,4 @@ void swapchain_init (State * state) {
         fprintf(stderr, "Encountered error during creation of swapchain, aborting.\n");
         exit(EXIT_FAILURE);
     }
-
-    // retrieve the swap chain images
-    vkGetSwapchainImagesKHR(state->logical_device,
-                            state->swapchain,
-                            &state->nimages,
-                            nullptr);
-
-    vkGetSwapchainImagesKHR(state->logical_device,
-                            state->swapchain,
-                            &state->nimages,
-                            state->images);
 }
