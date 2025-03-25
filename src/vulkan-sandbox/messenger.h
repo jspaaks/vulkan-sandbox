@@ -1,10 +1,7 @@
 #ifndef MESSENGER_H
 #define MESSENGER_H
+#include "couple.h"
 
-#include "state.h"
-#include "glfw-and-vulkan.h"
-
-void messenger_destroy(State * state);
-void messenger_init (State * state);
+Couple messenger_get_couple (void);
 
 #endif

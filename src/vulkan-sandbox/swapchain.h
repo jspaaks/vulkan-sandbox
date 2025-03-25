@@ -1,8 +1,7 @@
 #ifndef SWAPCHAIN_H
 #define SWAPCHAIN_H
-#include "state.h"
+#include "couple.h"
 
-void swapchain_destroy (State * state);
-void swapchain_init (State * state);
+Couple swapchain_get_couple (void);
 
 #endif

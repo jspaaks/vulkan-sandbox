@@ -1,3 +1,4 @@
+#include "couple.h"
 #include "logical-device.h"
 #include "state.h"
 #include "glfw-and-vulkan.h"
@@ -5,9 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+static void destroy (State * state);
+static void init (State * state);
 static void verify_extension_support(const State * state, const VkDeviceCreateInfo * create_info);
 
-void logical_device_destroy (State * state) {
+static void destroy (State * state) {
     VkResult result = vkDeviceWaitIdle(state->logical_device);
     if (result != VK_SUCCESS) {
         fprintf(stderr, "Encountered error while trying to destroy device, aborting.\n");
@@ -18,7 +21,7 @@ void logical_device_destroy (State * state) {
     state->logical_device = VK_NULL_HANDLE;
 }
 
-void logical_device_init (State * state) {
+static void init (State * state) {
     float priority[1] = { 1.0f };
     VkDeviceCreateInfo create_info = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
@@ -44,6 +47,13 @@ void logical_device_init (State * state) {
         fprintf(stderr, "Encountered error creating a logical device, aborting.\n");
         exit(EXIT_FAILURE);
     }
+}
+
+Couple logical_device_get_couple (void) {
+    return (Couple) {
+        .destroy = destroy,
+        .init = init,
+    };
 }
 
 static void verify_extension_support(const State * state, const VkDeviceCreateInfo * create_info) {

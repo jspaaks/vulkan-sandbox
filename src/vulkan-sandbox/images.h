@@ -1,8 +1,7 @@
 #ifndef IMAGES_H
 #define IMAGES_H
-#include "state.h"
+#include "couple.h"
 
-void images_destroy (State * state);
-void images_init (State * state);
+Couple images_get_couple (void);
 
 #endif

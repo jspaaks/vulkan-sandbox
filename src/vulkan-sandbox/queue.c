@@ -1,13 +1,16 @@
+#include "couple.h"
 #include "queue.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-void queue_destroy (State *) {
+static void destroy (State * state);
+static void init (State * state);
+
+void destroy (State *) {
     // No need to destroy anything.
 }
 
-
-void queue_init (State * state) {
+void init (State * state) {
     if (state->queue_family.queueCount == 0) {
         fprintf(stderr, "Selected queue family doesn't have any queues, aborting.\n");
         exit(EXIT_FAILURE);
@@ -23,4 +26,11 @@ void queue_init (State * state) {
                      state->queue_index,
                      &state->queue);
     fprintf(stdout, "     Picked queue index %" PRIu32 "\n", state->queue_index);
+}
+
+Couple queue_get_couple (void) {
+    return (Couple) {
+        .destroy = destroy,
+        .init = init,
+    };
 }

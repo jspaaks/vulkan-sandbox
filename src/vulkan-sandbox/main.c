@@ -1,3 +1,4 @@
+#include "couple.h"
 #include "images.h"
 #include "instance.h"
 #include "logical-device.h"
@@ -14,35 +15,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-void cleanup (State * state);
-void init (State * state);
 void loop (State * state);
-
-void cleanup (State * state) {
-    images_destroy(state);
-    swapchain_destroy(state);
-    queue_destroy(state);
-    logical_device_destroy(state);
-    queue_family_destroy(state);
-    physical_device_destroy(state);
-    surface_destroy(state);
-    messenger_destroy(state);
-    instance_destroy(state);
-    window_destroy(state);
-}
-
-void init (State * state) {
-    window_init(state);
-    instance_init(state);
-    messenger_init(state);
-    surface_init(state);
-    physical_device_init(state);
-    queue_family_init(state);
-    logical_device_init(state);
-    queue_init(state);
-    swapchain_init(state);
-    images_init(state);
-}
 
 void loop (State * state) {
     while (!glfwWindowShouldClose(state->window)) {
@@ -51,12 +24,35 @@ void loop (State * state) {
 }
 
 int main (void) {
+    Couple couples[] = {
+        window_get_couple(),
+        instance_get_couple(),
+        messenger_get_couple(),
+        surface_get_couple(),
+        physical_device_get_couple(),
+        queue_family_get_couple(),
+        logical_device_get_couple(),
+        queue_get_couple(),
+        swapchain_get_couple(),
+        images_get_couple(),
+    };
+    size_t ncouples = sizeof(couples) / sizeof(couples[0]);
 
     State state = {};
 
-    init(&state);
+    // initialize all parts of the state
+    for (size_t i = 0; i < ncouples; i++) {
+        couples[i].init(&state);
+    }
+
+    // main loop
     loop(&state);
-    cleanup(&state);
+
+    // release all resources
+    for (size_t i = 0; i < ncouples; i++) {
+        size_t j = ncouples - i - 1;
+        couples[j].destroy(&state);
+    }
 
     return EXIT_SUCCESS;
 }

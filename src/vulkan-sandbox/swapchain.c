@@ -1,3 +1,4 @@
+#include "couple.h"
 #include "swapchain.h"
 #include "glfw-and-vulkan.h"
 #include <stdio.h>
@@ -10,9 +11,11 @@ static VkSurfaceFormatKHR * formats = nullptr;
 static VkPresentModeKHR * modes = nullptr;
 static bool populated = false;
 
+static void destroy (State * state);
 static uint32_t clamp (uint32_t candidate, uint32_t lower, uint32_t upper);
 static VkExtent2D get_extent (GLFWwindow * window);
 static uint32_t get_image_count (void);
+static void init (State * state);
 static VkPresentModeKHR pick_present_mode (void);
 static VkSurfaceFormatKHR pick_surface_format (void);
 static void populate (State * state);
@@ -21,6 +24,27 @@ static uint32_t clamp (uint32_t candidate, uint32_t lower, uint32_t upper) {
     if (candidate < lower) return lower;
     if (candidate > upper) return upper;
     return candidate;
+}
+
+static void destroy (State * state) {
+    VkAllocationCallbacks * allocator = nullptr;
+    vkDestroySwapchainKHR(state->logical_device, state->swapchain, allocator);
+
+    // free static surface format variables
+    free(formats);
+    formats = nullptr;
+    nformats = 0;
+
+    // reset static capabilities struct
+    capabilities = (VkSurfaceCapabilitiesKHR) {};
+
+    // free static surface present mode variables
+    free(modes);
+    modes = nullptr;
+    nmodes = 0;
+
+    // reset populated indicator
+    populated = false;
 }
 
 static VkExtent2D get_extent (GLFWwindow * window) {
@@ -56,6 +80,39 @@ static uint32_t get_image_count (void) {
         return capabilities.maxImageCount;
     }
     return count;
+}
+
+static void init (State * state) {
+    populate(state);
+    state->extent = get_extent(state->window);
+    state->format = pick_surface_format().format;
+    VkColorSpaceKHR color_space = pick_surface_format().colorSpace;
+    VkSwapchainCreateInfoKHR create_info = {
+        .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+        .pNext = nullptr,
+        .flags = 0,
+        .surface = state->surface,
+        .minImageCount = get_image_count(),
+        .imageFormat = state->format,
+        .imageColorSpace = color_space,
+        .imageExtent = state->extent,
+        .imageArrayLayers = 1,
+        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
+        .queueFamilyIndexCount = 0,
+        .pQueueFamilyIndices = nullptr,
+        .preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+        .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+        .presentMode = pick_present_mode(),
+        .clipped = VK_TRUE,
+        .oldSwapchain = VK_NULL_HANDLE,
+    };
+    VkAllocationCallbacks * allocator = nullptr;
+    VkResult result = vkCreateSwapchainKHR(state->logical_device, &create_info, allocator, &state->swapchain);
+    if (result != VK_SUCCESS) {
+        fprintf(stderr, "Encountered error during creation of swapchain, aborting.\n");
+        exit(EXIT_FAILURE);
+    }
 }
 
 static VkPresentModeKHR pick_present_mode (void) {
@@ -164,58 +221,9 @@ static void populate (State * state) {
     populated = true;
 }
 
-void swapchain_destroy (State * state) {
-    VkAllocationCallbacks * allocator = nullptr;
-    vkDestroySwapchainKHR(state->logical_device, state->swapchain, allocator);
-
-    // free static surface format variables
-    free(formats);
-    formats = nullptr;
-    nformats = 0;
-
-    // reset static capabilities struct
-    capabilities = (VkSurfaceCapabilitiesKHR) {};
-
-    // free static surface present mode variables
-    free(modes);
-    modes = nullptr;
-    nmodes = 0;
-
-    // reset populated indicator
-    populated = false;
-}
-
-void swapchain_init (State * state) {
-    populate(state);
-
-    state->extent = get_extent(state->window);
-    state->format = pick_surface_format().format;
-    VkColorSpaceKHR color_space = pick_surface_format().colorSpace;
-
-    VkSwapchainCreateInfoKHR create_info = {
-        .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-        .pNext = nullptr,
-        .flags = 0,
-        .surface = state->surface,
-        .minImageCount = get_image_count(),
-        .imageFormat = state->format,
-        .imageColorSpace = color_space,
-        .imageExtent = state->extent,
-        .imageArrayLayers = 1,
-        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .queueFamilyIndexCount = 0,
-        .pQueueFamilyIndices = nullptr,
-        .preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-        .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-        .presentMode = pick_present_mode(),
-        .clipped = VK_TRUE,
-        .oldSwapchain = VK_NULL_HANDLE,
+Couple swapchain_get_couple (void) {
+    return (Couple) {
+        .destroy = destroy,
+        .init = init,
     };
-    VkAllocationCallbacks * allocator = nullptr;
-    VkResult result = vkCreateSwapchainKHR(state->logical_device, &create_info, allocator, &state->swapchain);
-    if (result != VK_SUCCESS) {
-        fprintf(stderr, "Encountered error during creation of swapchain, aborting.\n");
-        exit(EXIT_FAILURE);
-    }
 }

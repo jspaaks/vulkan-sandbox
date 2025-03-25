@@ -1,11 +1,15 @@
+#include "couple.h"
 #include "images.h"
 #include "state.h"
 
-void images_destroy (State *) {
+static void destroy (State * state);
+static void init (State * state);
+
+static void destroy (State *) {
     // pass
 }
 
-void images_init (State * state) {
+static void init (State * state) {
     vkGetSwapchainImagesKHR(state->logical_device,
                             state->swapchain,
                             &state->nimages,
@@ -15,4 +19,11 @@ void images_init (State * state) {
                             state->swapchain,
                             &state->nimages,
                             state->images);
+}
+
+Couple images_get_couple (void) {
+    return (Couple) {
+        .destroy = destroy,
+        .init = init,
+    };
 }

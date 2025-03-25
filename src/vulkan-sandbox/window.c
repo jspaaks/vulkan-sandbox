@@ -1,3 +1,4 @@
+#include "couple.h"
 #include "state.h"
 #include "window.h"
 #include "glfw-and-vulkan.h"
@@ -6,6 +7,8 @@
 #include <stdlib.h>
 
 static void callback (GLFWwindow * window, int key, int, int action, int);
+static void destroy (State * state);
+static void init (State * state);
 
 static void callback (GLFWwindow * window, int key, int, int action, int) {
     if ((key == GLFW_KEY_ESCAPE) && (action == GLFW_PRESS)) {
@@ -13,12 +16,12 @@ static void callback (GLFWwindow * window, int key, int, int action, int) {
     }
 }
 
-void window_destroy (State * state) {
+static void destroy (State * state) {
     glfwDestroyWindow(state->window);
     glfwTerminate();
 }
 
-void window_init (State * state) {
+static void init (State * state) {
 
     if (glfwInit() != GLFW_TRUE) {
         fprintf(stderr, "Encountered problem initializing window, aborting.\n");
@@ -46,4 +49,11 @@ void window_init (State * state) {
         fprintf(stderr, "Unexpectedly found an existing key callback, aborting.\n");
         exit(EXIT_FAILURE);
     }
+}
+
+Couple window_get_couple (void) {
+    return (Couple) {
+        .destroy = destroy,
+        .init = init,
+    };
 }

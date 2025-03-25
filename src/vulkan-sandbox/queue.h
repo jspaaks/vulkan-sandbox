@@ -1,8 +1,7 @@
 #ifndef QUEUE_H
 #define QUEUE_H
-#include "state.h"
+#include "couple.h"
 
-void queue_init (State * state);
-void queue_destroy (State * state);
+Couple queue_get_couple (void);
 
 #endif

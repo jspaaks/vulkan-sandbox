@@ -1,9 +1,7 @@
 #ifndef SURFACE_H
 #define SURFACE_H
-#include "state.h"
-#include "glfw-and-vulkan.h"
+#include "couple.h"
 
-void surface_destroy (State * state);
-void surface_init (State * state);
+Couple surface_get_couple (void);
 
 #endif

@@ -1,9 +1,7 @@
 #ifndef INSTANCE_H
 #define INSTANCE_H
-#include "state.h"
-#include "glfw-and-vulkan.h"
+#include "couple.h"
 
-void instance_init (State * state);
-void instance_destroy (State * state);
+Couple instance_get_couple (void);
 
 #endif

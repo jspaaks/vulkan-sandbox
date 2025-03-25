@@ -1,3 +1,4 @@
+#include "couple.h"
 #include "physical-device.h"
 #include "state.h"
 #include "glfw-and-vulkan.h"
@@ -5,16 +6,22 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
-
 static VkPhysicalDevice * devices = nullptr;
 static uint32_t ndevices = 0;
 
-
+static void destroy (State * state);
 static char * get_device_type_name (VkPhysicalDeviceType type);
+static void init (State * state);
 static VkPhysicalDevice pick (void);
 static void populate (State * state);
 static void print_devices (void);
 
+static void destroy (State * state) {
+    state->physical_device = VK_NULL_HANDLE;
+    free(devices);
+    devices = nullptr;
+    ndevices = 0;
+}
 
 static char * get_device_type_name (VkPhysicalDeviceType type) {
     static char * names[] = {
@@ -31,6 +38,23 @@ static char * get_device_type_name (VkPhysicalDeviceType type) {
     }
 }
 
+static void init (State * state) {
+    populate(state);
+    print_devices();
+    state->physical_device = pick();
+    {
+        VkPhysicalDeviceProperties props;
+        vkGetPhysicalDeviceProperties(state->physical_device, &props);
+        fprintf(stdout, "     Picked physical device '%s'\n", props.deviceName);
+    }
+}
+
+Couple physical_device_get_couple (void) {
+    return (Couple) {
+        .destroy = destroy,
+        .init = init,
+    };
+}
 
 static VkPhysicalDevice pick (void) {
     if (ndevices == 0) {
@@ -50,7 +74,6 @@ static VkPhysicalDevice pick (void) {
     exit(EXIT_FAILURE);
 }
 
-
 static void populate (State * state) {
     if (state->instance == VK_NULL_HANDLE) {
         fprintf(stderr, "Didn't expect to find an uninitialized instance, aborting.\n");
@@ -68,27 +91,6 @@ static void populate (State * state) {
     }
     vkEnumeratePhysicalDevices(state->instance, &ndevices, devices);
 }
-
-
-void physical_device_destroy (State * state) {
-    state->physical_device = VK_NULL_HANDLE;
-    free(devices);
-    devices = nullptr;
-    ndevices = 0;
-}
-
-
-void physical_device_init (State * state) {
-    populate(state);
-    print_devices();
-    state->physical_device = pick();
-    {
-        VkPhysicalDeviceProperties props;
-        vkGetPhysicalDeviceProperties(state->physical_device, &props);
-        fprintf(stdout, "     Picked physical device '%s'\n", props.deviceName);
-    }
-}
-
 
 static void print_devices (void) {
     fprintf(stderr, "Physical devices (%" PRIu32 "):\n", ndevices);

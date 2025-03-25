@@ -1,8 +1,7 @@
 #ifndef LOGICAL_DEVICE_H
 #define LOGICAL_DEVICE_H
-#include "state.h"
+#include "couple.h"
 
-void logical_device_destroy (State * state);
-void logical_device_init (State * state);
+Couple logical_device_get_couple (void);
 
 #endif

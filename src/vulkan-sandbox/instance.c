@@ -1,3 +1,4 @@
+#include "couple.h"
 #include "instance.h"
 #include "errors.h"
 #include "extensions.h"
@@ -10,17 +11,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+static void destroy (State * state);
+static void init (State * state);
 static void print_instance_extension_properties (const VkInstanceCreateInfo * create_info);
 static void print_instance_layer_properties (const VkInstanceCreateInfo * create_info);
 
-
-void instance_destroy (State * state) {
+static void destroy (State * state) {
     vkDestroyInstance(state->instance, nullptr);
 }
 
-
-void instance_init (State * state) {
+static void init (State * state) {
 
     if (glfwVulkanSupported() != GLFW_TRUE) {
         fprintf(stderr, "According to GLWF, Vulkan is not supported here, aborting.\n");
@@ -49,6 +49,13 @@ void instance_init (State * state) {
         fprintf(stderr, "Problem creating VkInstance (%s), aborting.\n", stringify_vkresult(result));
         exit(EXIT_FAILURE);
     }
+}
+
+Couple instance_get_couple (void) {
+    return (Couple) {
+        .destroy = destroy,
+        .init = init,
+    };
 }
 
 
