@@ -6,9 +6,13 @@
 typedef struct state State;
 
 struct state {
+    VkExtent2D extent;
+    VkFormat format;
+    VkImage * images;
     VkInstance instance;
     VkDevice logical_device;
     VkDebugUtilsMessengerEXT messenger;
+    uint32_t nimages;
     VkPhysicalDevice physical_device;
     VkSwapchainKHR swapchain;
     VkQueue queue;

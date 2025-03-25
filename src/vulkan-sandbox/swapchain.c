@@ -11,7 +11,7 @@ static VkPresentModeKHR * modes = nullptr;
 static bool populated = false;
 
 static uint32_t clamp (uint32_t candidate, uint32_t lower, uint32_t upper);
-static VkExtent2D get_extent (State * state);
+static VkExtent2D get_extent (GLFWwindow * window);
 static uint32_t get_image_count (void);
 static VkPresentModeKHR pick_present_mode (void);
 static VkSurfaceFormatKHR pick_surface_format (void);
@@ -23,7 +23,7 @@ static uint32_t clamp (uint32_t candidate, uint32_t lower, uint32_t upper) {
     return candidate;
 }
 
-static VkExtent2D get_extent (State * state) {
+static VkExtent2D get_extent (GLFWwindow * window) {
     if (!populated) {
         fprintf(stderr, "Need to populate VkSurfaceCapabilitiesKHR struct first, aborting.\n");
         exit(EXIT_FAILURE);
@@ -31,7 +31,7 @@ static VkExtent2D get_extent (State * state) {
     if (capabilities.currentExtent.width == UINT32_MAX) {
         int width = -1;
         int height = -1;
-        glfwGetFramebufferSize(state->window, &width, &height);
+        glfwGetFramebufferSize(window, &width, &height);
         return (VkExtent2D) {
             .width = clamp(width,
                            capabilities.minImageExtent.width,
@@ -187,15 +187,20 @@ void swapchain_destroy (State * state) {
 
 void swapchain_init (State * state) {
     populate(state);
+
+    state->extent = get_extent(state->window);
+    state->format = pick_surface_format().format;
+    VkColorSpaceKHR color_space = pick_surface_format().colorSpace;
+
     VkSwapchainCreateInfoKHR create_info = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .pNext = nullptr,
         .flags = 0,
         .surface = state->surface,
         .minImageCount = get_image_count(),
-        .imageFormat = pick_surface_format().format,
-        .imageColorSpace = pick_surface_format().colorSpace,
-        .imageExtent = get_extent(state),
+        .imageFormat = state->format,
+        .imageColorSpace = color_space,
+        .imageExtent = state->extent,
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
@@ -213,5 +218,15 @@ void swapchain_init (State * state) {
         fprintf(stderr, "Encountered error during creation of swapchain, aborting.\n");
         exit(EXIT_FAILURE);
     }
-    fprintf(stderr, "TODO need to retrieve the swap chain images\n");
+
+    // retrieve the swap chain images
+    vkGetSwapchainImagesKHR(state->logical_device,
+                            state->swapchain,
+                            &state->nimages,
+                            nullptr);
+
+    vkGetSwapchainImagesKHR(state->logical_device,
+                            state->swapchain,
+                            &state->nimages,
+                            state->images);
 }
