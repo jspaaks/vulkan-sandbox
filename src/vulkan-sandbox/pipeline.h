@@ -1,7 +1,7 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
-#include "glfw-and-vulkan.h"
+#include "couple.h"
 
-void pipeline_init (void);
+Couple pipeline_get_couple (void);
 
 #endif

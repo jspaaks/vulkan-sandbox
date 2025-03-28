@@ -5,6 +5,7 @@
 #include "logical-device.h"
 #include "messenger.h"
 #include "physical-device.h"
+#include "pipeline.h"
 #include "queue-family.h"
 #include "queue.h"
 #include "state.h"
@@ -37,6 +38,7 @@ int main (void) {
         swapchain_get_couple(),
         images_get_couple(),
         imageviews_get_couple(),
+        pipeline_get_couple(),
     };
     size_t ncouples = sizeof(couples) / sizeof(couples[0]);
     State state = {};
