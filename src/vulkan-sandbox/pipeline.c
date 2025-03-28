@@ -6,22 +6,27 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static char * fragcode = nullptr;
-static char * vertcode = nullptr;
+typedef struct {
+    char * bytes;
+    uint32_t nbytes;
+} Shader;
+
+static Shader fragcode = {};
+static Shader vertcode = {};
 static void destroy (State * state);
 static void init (State * state);
-static char * load_shader (const char * filename);
+static Shader load_shader (const char * filename);
 
 static void destroy (State * state) {
     fprintf(stdout, "TODO destroy shader modules\n");
 
     // free malloc'ed memory that holds the fragment shader code
-    free(fragcode);
-    fragcode = nullptr;
+    free(fragcode.bytes);
+    fragcode.bytes = nullptr;
 
     // free malloc'ed memory that holds the vertex shader code
-    free(vertcode);
-    vertcode = nullptr;
+    free(vertcode.bytes);
+    vertcode.bytes = nullptr;
 }
 
 static void init (State * state) {
@@ -31,7 +36,7 @@ static void init (State * state) {
     fprintf(stdout, "TODO initialize shader modules\n");
 }
 
-static char * load_shader (const char * filename) {
+static Shader load_shader (const char * filename) {
     FILE * fp = fopen(filename, "rb");
     if (fp == nullptr) {
         fprintf(stderr,
@@ -64,14 +69,14 @@ static char * load_shader (const char * filename) {
             exit(EXIT_FAILURE);
         }
     }
-    char * code = malloc(nbytes * sizeof(char));
-    if (code == nullptr) {
+    char * bytes = malloc(nbytes * sizeof(char));
+    if (bytes == nullptr) {
         fprintf(stderr,
                 "%s\nEncountered an error while trying to allocate memory for shader code from '%s', aborting",
                 strerror(errno), filename);
         exit(EXIT_FAILURE);
     }
-    long nitems = (long) fread(code, 1, nbytes, fp);
+    long nitems = (long) fread(bytes, 1, nbytes, fp);
     if (nitems != nbytes) {
         fprintf(stderr,
                 "%s\nEncountered an error while reading data from '%s', aborting",
@@ -87,7 +92,10 @@ static char * load_shader (const char * filename) {
             exit(EXIT_FAILURE);
         }
     }
-    return code;
+    return (Shader) {
+        .bytes = bytes,
+        .nbytes = nbytes,
+    };
 }
 
 Couple pipeline_get_couple (void) {
