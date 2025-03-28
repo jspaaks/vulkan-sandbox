@@ -69,6 +69,7 @@ target_sources(
         ${PROJECT_ROOT}/src/vulkan-sandbox/errors.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/extensions.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/images.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/imageviews.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/instance.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/layers.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/logical-device.c

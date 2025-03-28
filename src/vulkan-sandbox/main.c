@@ -1,5 +1,6 @@
 #include "couple.h"
 #include "images.h"
+#include "imageviews.h"
 #include "instance.h"
 #include "logical-device.h"
 #include "messenger.h"
@@ -35,9 +36,9 @@ int main (void) {
         queue_get_couple(),
         swapchain_get_couple(),
         images_get_couple(),
+        imageviews_get_couple(),
     };
     size_t ncouples = sizeof(couples) / sizeof(couples[0]);
-
     State state = {};
 
     // initialize all parts of the state

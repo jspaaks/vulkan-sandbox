@@ -1,12 +1,15 @@
 #include "couple.h"
 #include "images.h"
 #include "state.h"
+#include <stdlib.h>
 
 static void destroy (State * state);
 static void init (State * state);
 
-static void destroy (State *) {
-    // pass
+static void destroy (State * state) {
+    free(state->images);
+    state->images = nullptr;
+    state->nimages = 0;
 }
 
 static void init (State * state) {
@@ -14,6 +17,8 @@ static void init (State * state) {
                             state->swapchain,
                             &state->nimages,
                             nullptr);
+
+    state->images = malloc(state->nimages * sizeof(VkImage));
 
     vkGetSwapchainImagesKHR(state->logical_device,
                             state->swapchain,
