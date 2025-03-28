@@ -22,6 +22,14 @@ $ cmake --install .
 $ ./dist/bin/vulkan-sandbox
 ```
 
+The CMake build does not currently compile the shaders. You can do this manually by
+
+```console
+$ cd assets/shaders
+$ glslc shader.frag -o shader.frag.spv
+$ glslc shader.vert -o shader.vert.spv
+```
+
 ## `clang-format`
 
 The file `.clang-format` contains an initial configuration for (automatic) formatting with [clang-format](https://clang.llvm.org/docs/ClangFormat.html). Run the formatter with e.g.:
