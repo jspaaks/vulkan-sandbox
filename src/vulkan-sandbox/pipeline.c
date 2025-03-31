@@ -6,37 +6,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct {
-    char * bytes;
-    uint32_t nbytes;
-} Shader;
-
-static Shader fragcode = {};
-static Shader vertcode = {};
 static void destroy (State * state);
 static void init (State * state);
-static Shader load_shader (const char * filename);
+static VkShaderModule load_shader (State * state, const char * filename);
 
-static void destroy (State * state) {
-    fprintf(stdout, "TODO destroy shader modules\n");
-
-    // free malloc'ed memory that holds the fragment shader code
-    free(fragcode.bytes);
-    fragcode.bytes = nullptr;
-
-    // free malloc'ed memory that holds the vertex shader code
-    free(vertcode.bytes);
-    vertcode.bytes = nullptr;
+static void destroy (State *) {
+    // TODO destroy pipeline
 }
 
 static void init (State * state) {
-    fprintf(stdout, "TODO fix shader paths\n");
-    fragcode = load_shader("dist/assets/shaders/shader.frag.spv");
-    vertcode = load_shader("dist/assets/shaders/shader.vert.spv");
-    fprintf(stdout, "TODO initialize shader modules\n");
+    fprintf(stdout, "TODO fix hardcoded shader paths\n");
+    VkShaderModule fragshader = load_shader(state, "dist/assets/shaders/shader.frag.spv");
+    VkShaderModule vertshader = load_shader(state, "dist/assets/shaders/shader.vert.spv");
+
+    // create pipeline here
+    // TODO
+
+    // according to the docs, it's ok to destroy the shaders once the pipeline has been created
+    vkDestroyShaderModule(state->logical_device, fragshader, nullptr);
+    vkDestroyShaderModule(state->logical_device, vertshader, nullptr);
 }
 
-static Shader load_shader (const char * filename) {
+static VkShaderModule load_shader (State * state, const char * filename) {
     FILE * fp = fopen(filename, "rb");
     if (fp == nullptr) {
         fprintf(stderr,
@@ -92,10 +83,20 @@ static Shader load_shader (const char * filename) {
             exit(EXIT_FAILURE);
         }
     }
-    return (Shader) {
-        .bytes = bytes,
-        .nbytes = nbytes,
+    VkShaderModuleCreateInfo create_info = (VkShaderModuleCreateInfo) {
+        .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+        .codeSize = (size_t) nbytes,
+        .pCode = (const uint32_t *) bytes,    // this cast might be sus
     };
+    VkShaderModule shader_module = {};
+    VkResult result = vkCreateShaderModule(state->logical_device, &create_info, nullptr, &shader_module);
+    if (result != VK_SUCCESS) {
+        fprintf(stderr, "Encountered an error while trying to create shader module, aborting");
+        exit(EXIT_FAILURE);
+    }
+    // according to the docs, the code buffer can be freed once shader_module has been created
+    free(bytes);
+    return shader_module;
 }
 
 Couple pipeline_get_couple (void) {
