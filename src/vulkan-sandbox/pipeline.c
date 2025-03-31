@@ -16,15 +16,33 @@ static void destroy (State *) {
 
 static void init (State * state) {
     fprintf(stdout, "TODO fix hardcoded shader paths\n");
-    VkShaderModule fragshader = load_shader(state, "dist/assets/shaders/shader.frag.spv");
-    VkShaderModule vertshader = load_shader(state, "dist/assets/shaders/shader.vert.spv");
-
-    // create pipeline here
-    // TODO
-
-    // according to the docs, it's ok to destroy the shaders once the pipeline has been created
-    vkDestroyShaderModule(state->logical_device, fragshader, nullptr);
-    vkDestroyShaderModule(state->logical_device, vertshader, nullptr);
+    VkPipelineShaderStageCreateInfo stages[SHADER_STAGE_COUNT] = {};
+    {
+        // create vert shader
+        VkShaderModule shader = load_shader(state, "dist/assets/shaders/shader.vert.spv");
+        stages[SHADER_STAGE_VERT] = (VkPipelineShaderStageCreateInfo) {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .stage = VK_SHADER_STAGE_VERTEX_BIT,
+            .module = shader,
+            .pName = "main",
+        };
+        // TODO pipeline
+        // according to the docs, it's ok to destroy the shaders once the pipeline has been created
+        vkDestroyShaderModule(state->logical_device, shader, nullptr);
+    }
+    {
+        // create frag shader
+        VkShaderModule shader = load_shader(state, "dist/assets/shaders/shader.frag.spv");
+        stages[SHADER_STAGE_FRAG] = (VkPipelineShaderStageCreateInfo) {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .module = shader,
+            .pName = "main",
+        };
+        // TODO pipeline
+        // according to the docs, it's ok to destroy the shaders once the pipeline has been created
+        vkDestroyShaderModule(state->logical_device, shader, nullptr);
+    }
 }
 
 static VkShaderModule load_shader (State * state, const char * filename) {
