@@ -51,7 +51,7 @@ int main (void) {
     // main loop
     loop(&state);
 
-    // release all resources
+    // release all resources in reverse order compared to initialization
     for (size_t i = 0; i < ncouples; i++) {
         size_t j = ncouples - i - 1;
         couples[j].destroy(&state);
