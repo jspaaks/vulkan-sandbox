@@ -18,6 +18,7 @@ struct state {
     VkPhysicalDevice physical_device;
     VkPipeline pipeline;
     VkPipelineLayout pipeline_layout;
+    VkRenderPass renderpass;
     VkSwapchainKHR swapchain;
     VkQueue queue;
     VkQueueFamilyProperties queue_family;

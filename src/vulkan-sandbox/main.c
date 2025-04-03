@@ -9,6 +9,7 @@
 #include "pipeline-layout.h"
 #include "queue-family.h"
 #include "queue.h"
+#include "renderpass.h"
 #include "state.h"
 #include "surface.h"
 #include "swapchain.h"
@@ -39,8 +40,9 @@ int main (void) {
         swapchain_get_couple(),
         images_get_couple(),
         imageviews_get_couple(),
-        pipeline_get_couple(),
+        renderpass_get_couple(),
         pipeline_layout_get_couple(),
+        pipeline_get_couple(),
     };
     size_t ncouples = sizeof(couples) / sizeof(couples[0]);
     State state = {};

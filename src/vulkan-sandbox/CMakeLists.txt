@@ -80,6 +80,7 @@ target_sources(
         ${PROJECT_ROOT}/src/vulkan-sandbox/pipeline-layout.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/queue.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/queue-family.c
+        ${PROJECT_ROOT}/src/vulkan-sandbox/renderpass.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/surface.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/swapchain.c
         ${PROJECT_ROOT}/src/vulkan-sandbox/window.c
