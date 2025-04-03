@@ -36,14 +36,15 @@ static VkPipelineDepthStencilStateCreateInfo * get_depth_stencil_state (void) {
 }
 
 static VkPipelineDynamicStateCreateInfo * get_dynamic_state (void) {
-    constexpr size_t nstates = 2;
-    return & (VkPipelineDynamicStateCreateInfo) {
+    static VkDynamicState states[] = {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR,
+    };
+    constexpr uint32_t nstates = (uint32_t) (sizeof(states) / sizeof(states[0]));
+    static VkPipelineDynamicStateCreateInfo info = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
         .dynamicStateCount = nstates,
-        .pDynamicStates = (VkDynamicState[nstates]){
-            VK_DYNAMIC_STATE_VIEWPORT,
-            VK_DYNAMIC_STATE_SCISSOR,
-        },
+        .pDynamicStates = &states[0],
     };
 }
 
