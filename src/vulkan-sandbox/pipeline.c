@@ -50,8 +50,12 @@ static VkPipelineDynamicStateCreateInfo * get_dynamic_state (void) {
 }
 
 static VkPipelineInputAssemblyStateCreateInfo * get_input_assembly_state (void) {
-    // TODO
-    return nullptr;
+    static VkPipelineInputAssemblyStateCreateInfo info = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+        .primitiveRestartEnable = VK_FALSE,
+    };
+    return &info;
 }
 
 static VkPipelineMultisampleStateCreateInfo * get_multisample_state (void) {
