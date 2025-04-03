@@ -31,7 +31,6 @@ static VkPipelineColorBlendStateCreateInfo * get_color_blend_state (void) {
 }
 
 static VkPipelineDepthStencilStateCreateInfo * get_depth_stencil_state (void) {
-    // TODO
     return nullptr;
 }
 
