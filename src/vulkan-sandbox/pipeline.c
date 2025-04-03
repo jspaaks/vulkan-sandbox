@@ -59,8 +59,12 @@ static VkPipelineInputAssemblyStateCreateInfo * get_input_assembly_state (void) 
 }
 
 static VkPipelineMultisampleStateCreateInfo * get_multisample_state (void) {
-    // TODO
-    return nullptr;
+    static VkPipelineMultisampleStateCreateInfo info = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+        .sampleShadingEnable = VK_FALSE,
+        .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+    };
+    return &info;
 }
 
 static VkPipelineRasterizationStateCreateInfo * get_rasterization_state (void) {
