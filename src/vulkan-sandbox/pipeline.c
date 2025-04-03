@@ -26,8 +26,20 @@ static void destroy (State * state) {
 }
 
 static VkPipelineColorBlendStateCreateInfo * get_color_blend_state (void) {
-    // TODO
-    return nullptr;
+    static VkPipelineColorBlendAttachmentState attachment = {
+        .colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+                          VK_COLOR_COMPONENT_G_BIT |
+                          VK_COLOR_COMPONENT_B_BIT |
+                          VK_COLOR_COMPONENT_A_BIT,
+        .blendEnable = VK_FALSE,
+    };
+    static VkPipelineColorBlendStateCreateInfo info = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+        .logicOpEnable = VK_FALSE,
+        .attachmentCount = 1,
+        .pAttachments = &attachment,
+    };
+    return &info;
 }
 
 static VkPipelineDepthStencilStateCreateInfo * get_depth_stencil_state (void) {
