@@ -6,6 +6,7 @@
 #include "messenger.h"
 #include "physical-device.h"
 #include "pipeline.h"
+#include "pipeline-layout.h"
 #include "queue-family.h"
 #include "queue.h"
 #include "state.h"
@@ -39,6 +40,7 @@ int main (void) {
         images_get_couple(),
         imageviews_get_couple(),
         pipeline_get_couple(),
+        pipeline_layout_get_couple(),
     };
     size_t ncouples = sizeof(couples) / sizeof(couples[0]);
     State state = {};

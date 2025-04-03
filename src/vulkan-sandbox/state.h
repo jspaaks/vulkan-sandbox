@@ -17,6 +17,7 @@ struct state {
     uint32_t nimageviews;
     VkPhysicalDevice physical_device;
     VkPipeline pipeline;
+    VkPipelineLayout pipeline_layout;
     VkSwapchainKHR swapchain;
     VkQueue queue;
     VkQueueFamilyProperties queue_family;
