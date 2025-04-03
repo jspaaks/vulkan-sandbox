@@ -114,9 +114,27 @@ static VkPipelineVertexInputStateCreateInfo * get_vertex_input_state (void) {
     return &info;
 }
 
-static VkPipelineViewportStateCreateInfo * get_viewport_state (void) {
-    // TODO
-    return nullptr;
+static VkPipelineViewportStateCreateInfo * get_viewport_state (State * state) {
+    static VkViewport viewport = {
+        .x = 0.0f,
+        .y = 0.0f,
+        .width = (float) state->extent.width,
+        .height = (float) state->extent.height,
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f,
+    };
+    static VkRect2D scissor = {
+        .offset = {0, 0},
+        .extent = state->extent,
+    };
+    static VkPipelineViewportStateCreateInfo info = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+        .viewportCount = 1,
+        .pViewports = &viewport,
+        .scissorCount = 1,
+        .pScissors = &scissor,
+    };
+    return &info;
 }
 
 static void init (State * state) {
