@@ -46,6 +46,7 @@ static VkPipelineDynamicStateCreateInfo * get_dynamic_state (void) {
         .dynamicStateCount = nstates,
         .pDynamicStates = &states[0],
     };
+    return &info;
 }
 
 static VkPipelineInputAssemblyStateCreateInfo * get_input_assembly_state (void) {
@@ -99,8 +100,14 @@ static VkPipelineTessellationStateCreateInfo * get_tessellation_state (void) {
 }
 
 static VkPipelineVertexInputStateCreateInfo * get_vertex_input_state (void) {
-    // TODO
-    return nullptr;
+    static VkPipelineVertexInputStateCreateInfo info = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+        .vertexBindingDescriptionCount = 0,
+        .pVertexBindingDescriptions = nullptr,
+        .vertexAttributeDescriptionCount = 0,
+        .pVertexAttributeDescriptions = nullptr,
+    };
+    return &info;
 }
 
 static VkPipelineViewportStateCreateInfo * get_viewport_state (void) {
