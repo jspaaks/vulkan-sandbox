@@ -104,8 +104,6 @@ static VkPipelineShaderStageCreateInfo * get_stages (State * state) {
             .module = shader,
             .pName = "main",
         };
-        // according to the docs, it's ok to destroy the shaders once the pipeline has been created
-        vkDestroyShaderModule(state->logical_device, shader, nullptr);
     }
     {
         // create fragment shader
@@ -116,8 +114,6 @@ static VkPipelineShaderStageCreateInfo * get_stages (State * state) {
             .module = shader,
             .pName = "main",
         };
-        // according to the docs, it's ok to destroy the shaders once the pipeline has been created
-        vkDestroyShaderModule(state->logical_device, shader, nullptr);
     }
     return &stages[0];
 }
@@ -173,8 +169,13 @@ static void init (State * state) {
                                                 nullptr,
                                                 &state->pipeline);
     if (result != VK_SUCCESS) {
-        fprintf(stderr, "Encountered an error while trying to create the graphics pipeline, aborting");
+        fprintf(stderr, "Encountered an error while trying to create the graphics pipeline, aborting\n");
         exit(EXIT_FAILURE);
+    }
+    {
+        // according to the docs, it's ok to destroy the shaders once the pipeline has been created
+        vkDestroyShaderModule(state->logical_device, info.pStages[SHADER_STAGE_VERT].module, nullptr);
+        vkDestroyShaderModule(state->logical_device, info.pStages[SHADER_STAGE_FRAG].module, nullptr);
     }
 }
 
@@ -182,7 +183,7 @@ static VkShaderModule load_shader (State * state, const char * filename) {
     FILE * fp = fopen(filename, "rb");
     if (fp == nullptr) {
         fprintf(stderr,
-                "%s\nEncountered an error while trying to read file '%s' as binary data, aborting",
+                "%s\nEncountered an error while trying to read file '%s' as binary data, aborting\n",
                 strerror(errno), filename);
         exit(EXIT_FAILURE);
     }
@@ -190,7 +191,7 @@ static VkShaderModule load_shader (State * state, const char * filename) {
         int status = fseek(fp, 0, SEEK_END);
         if (status != 0) {
             fprintf(stderr,
-                    "%s\nEncountered an error while trying to move cursor to end of '%s', aborting",
+                    "%s\nEncountered an error while trying to move cursor to end of '%s', aborting\n",
                     strerror(errno), filename);
             exit(EXIT_FAILURE);
         }
@@ -198,7 +199,7 @@ static VkShaderModule load_shader (State * state, const char * filename) {
     long nbytes = ftell(fp);
     if (nbytes == -1) {
         fprintf(stderr,
-                "%s\nEncountered an error while trying to read cursor position of '%s', aborting",
+                "%s\nEncountered an error while trying to read cursor position of '%s', aborting\n",
                 strerror(errno), filename);
         exit(EXIT_FAILURE);
     }
@@ -206,7 +207,7 @@ static VkShaderModule load_shader (State * state, const char * filename) {
         int status = fseek(fp, 0, SEEK_SET);
         if (status != 0) {
             fprintf(stderr,
-                    "%s\nEncountered an error while trying to move cursor to beginning of '%s', aborting",
+                    "%s\nEncountered an error while trying to move cursor to beginning of '%s', aborting\n",
                     strerror(errno), filename);
             exit(EXIT_FAILURE);
         }
@@ -214,14 +215,14 @@ static VkShaderModule load_shader (State * state, const char * filename) {
     char * bytes = malloc(nbytes * sizeof(char));
     if (bytes == nullptr) {
         fprintf(stderr,
-                "%s\nEncountered an error while trying to allocate memory for shader code from '%s', aborting",
+                "%s\nEncountered an error while trying to allocate memory for shader code from '%s', aborting\n",
                 strerror(errno), filename);
         exit(EXIT_FAILURE);
     }
     long nitems = (long) fread(bytes, 1, nbytes, fp);
     if (nitems != nbytes) {
         fprintf(stderr,
-                "%s\nEncountered an error while reading data from '%s', aborting",
+                "%s\nEncountered an error while reading data from '%s', aborting\n",
                 strerror(errno), filename);
         exit(EXIT_FAILURE);
     }
@@ -229,7 +230,7 @@ static VkShaderModule load_shader (State * state, const char * filename) {
         int status = fclose(fp);
         if (status != 0) {
             fprintf(stderr,
-                    "%s\nEncountered an error while trying to close file '%s', aborting",
+                    "%s\nEncountered an error while trying to close file '%s', aborting\n",
                     strerror(errno), filename);
             exit(EXIT_FAILURE);
         }
@@ -242,7 +243,7 @@ static VkShaderModule load_shader (State * state, const char * filename) {
     VkShaderModule shader_module = {};
     VkResult result = vkCreateShaderModule(state->logical_device, &create_info, nullptr, &shader_module);
     if (result != VK_SUCCESS) {
-        fprintf(stderr, "Encountered an error while trying to create shader module, aborting");
+        fprintf(stderr, "Encountered an error while trying to create shader module, aborting\n");
         exit(EXIT_FAILURE);
     }
     // according to the docs, the code buffer can be freed once shader_module has been created
