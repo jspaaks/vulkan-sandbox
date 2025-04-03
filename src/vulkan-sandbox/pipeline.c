@@ -16,7 +16,7 @@ static VkPipelineRasterizationStateCreateInfo * get_rasterization_state (void);
 static VkPipelineShaderStageCreateInfo * get_stages (State * state);
 static VkPipelineTessellationStateCreateInfo * get_tessellation_state (void);
 static VkPipelineVertexInputStateCreateInfo * get_vertex_input_state (void);
-static VkPipelineViewportStateCreateInfo * get_viewport_state (void);
+static VkPipelineViewportStateCreateInfo * get_viewport_state (State * state);
 static void init (State * state);
 static VkShaderModule load_shader (State * state, const char * filename);
 
@@ -113,14 +113,17 @@ static VkPipelineViewportStateCreateInfo * get_viewport_state (State * state) {
     static VkViewport viewport = {
         .x = 0.0f,
         .y = 0.0f,
-        .width = (float) state->extent.width,
-        .height = (float) state->extent.height,
+        .width = 800.0f,
+        .height = 600.0f,
         .minDepth = 0.0f,
         .maxDepth = 1.0f,
     };
     static VkRect2D scissor = {
         .offset = {0, 0},
-        .extent = state->extent,
+        .extent = {
+            .width = 800,
+            .height = 600,
+        },
     };
     static VkPipelineViewportStateCreateInfo info = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
@@ -142,7 +145,7 @@ static void init (State * state) {
         .pVertexInputState = get_vertex_input_state(),
         .pInputAssemblyState = get_input_assembly_state(),
         .pTessellationState = get_tessellation_state(),
-        .pViewportState = get_viewport_state(),
+        .pViewportState = get_viewport_state(state),
         .pRasterizationState = get_rasterization_state(),
         .pMultisampleState = get_multisample_state(),
         .pDepthStencilState = get_depth_stencil_state(),
