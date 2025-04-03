@@ -64,8 +64,17 @@ static VkPipelineMultisampleStateCreateInfo * get_multisample_state (void) {
 }
 
 static VkPipelineRasterizationStateCreateInfo * get_rasterization_state (void) {
-    // TODO
-    return nullptr;
+    static VkPipelineRasterizationStateCreateInfo info = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+        .depthClampEnable = VK_FALSE,
+        .rasterizerDiscardEnable = VK_FALSE,
+        .polygonMode = VK_POLYGON_MODE_FILL,
+        .lineWidth = 1.0f,
+        .cullMode = VK_CULL_MODE_BACK_BIT,
+        .frontFace = VK_FRONT_FACE_CLOCKWISE,
+        .depthBiasEnable = VK_FALSE,
+    };
+    return &info;
 }
 
 static VkPipelineShaderStageCreateInfo * get_stages (State * state) {
